@@ -7,7 +7,7 @@ class CreateDB(object):
     def insertDB(self, user):
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
         db = server['python-test']
-        doc_id, doc_rev = db.save({'id': user._id, 'name': user._name, 'username': user._username, 'password': user._password})
+        doc_id, doc_rev = db.save({'id': user._id, 'name': user._name, 'username': user._username, 'password': user._password, 'doc_type':'user'})
 
 
     def retrieve(self, user):
@@ -16,17 +16,15 @@ class CreateDB(object):
         db = server['python-test']
         for dbObj in db:
             doc = db[dbObj]
-            print doc['username']
-            if doc['username'] == user._username:
-                print "*******Existing*******"
-                if doc['password'] == user._password:
-                    return 1
-                    break
+            if doc['doc_type'] == 'user':
+                if doc['username'] == user._username:
+                    print "*******Existing*******"
+                    if doc['password'] == user._password:
+                        return 1
+                        break
                 else:
-                    return 0
-            else:
-                print "*******not existing*******"
-                return 0
+                    print "*******not existing*******"
+
 
     def getAllBoards(self):
         server = couchdb.Server()
@@ -34,8 +32,11 @@ class CreateDB(object):
         all_boards = []
         for db_object in db:
             doc = db[db_object]
-            if doc['board_id']:
-                all_boards.append(str(doc['board_id'])+str(doc['board_name']))
+            if doc['doc_type'] == 'board':
+                all_boards.append("Board ID: "+
+                                  str(doc['board_id'])+
+                                  ", Board Name: " +
+                                  str(doc['board_name']) + "\n" )
         return all_boards
 
     def getOneBoard (self,board_id):
@@ -44,6 +45,6 @@ class CreateDB(object):
         all_pins = []
         for db_object in db:
             doc = db[db_object]
-            if doc['board_id'] == board_id:
-                all_pins.append(str(doc['pin_id']))
+            if doc['doc_type'] == 'pin' and doc['board_id'] == board_id:
+                    all_pins.append(str(doc['pin_id']))
         return all_pins
