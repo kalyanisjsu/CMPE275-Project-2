@@ -15,9 +15,7 @@ import sys
 import socket
 import User
 import random
-
-
-
+import couchdb
 
 # bottle framework
 from bottle import request, response, route, run, template, get, post, error
@@ -26,19 +24,16 @@ from bottle import request, response, route, run, template, get, post, error
 from classroom import Room
 from couchdatabase import CreateDB
 import Board
-
-
 # virtual classroom implementation
 room = None
 
 
 def setup(base, conf_fn):
     print '\n**** service initialization ****\n'
-    global room, db, user, board, boards
+    global room, db, user
     room = Room(base, conf_fn)
     db = CreateDB()
     user = User.User()
-    boards = Board.Board()
 
 #
 # setup the configuration for our service

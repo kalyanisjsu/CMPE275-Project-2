@@ -2,7 +2,6 @@ __author__ = 'kalyaninirmal'
 
 import couchdb
 
-
 class CreateDB(object):
 
     def insertDB(self, user):
