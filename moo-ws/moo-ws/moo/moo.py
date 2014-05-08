@@ -100,7 +100,26 @@ def signup():
     user._name = request.forms.get('name')
     user._username = request.forms.get('username')
     user._password = request.forms.get('password')
-    return db.createdb(user)
+    return db.insertDB(user)
+
+
+@route('/v1/login', method='POST')
+def signin():
+    for k, v in request.forms.allitems():
+        print "form:", k, "=", v
+
+    user._username = request.forms.get('username')
+    user._password = request.forms.get('password')
+    value = db.retrieve(user)
+    if value==1:
+        return "Login Successful!!!"
+    else:
+        return "Username doesn't exist or Password is incorrect !!!"
+
+
+#@route('/v1/user/:user_id', method='GET')
+#def getuserboards():
+
 
 
 #
