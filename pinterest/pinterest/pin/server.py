@@ -19,6 +19,14 @@ from couchdatabase import CreateDB
 import Board
 
 # setup the configuration for our service
+
+def setup(base, conf_fn):
+    print '\n**** service initialization ****\n'
+    global db, user, signin_done
+    db = CreateDB()
+    user = User.User()
+    signin_done = 0
+	
 @route('/')
 def root():
     return 'welcome to our website'
