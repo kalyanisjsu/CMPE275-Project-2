@@ -5,7 +5,7 @@
 import sys
 
 from bottle import run
-from moo import setup 
+from server import setup
 
 if len(sys.argv) > 2:
   base = sys.argv[1]

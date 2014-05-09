@@ -1,5 +1,3 @@
-
-
 import couchdb
 
 class CreateDB(object):
