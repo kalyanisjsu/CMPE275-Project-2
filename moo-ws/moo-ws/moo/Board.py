@@ -1,4 +1,4 @@
-__author__ = 'Shweta'
+
 
 class Board(object):
     def __init__(self):

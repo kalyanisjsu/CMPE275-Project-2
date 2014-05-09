@@ -13,6 +13,7 @@ Notes
 import time
 import sys
 import socket
+import os
 import User
 import random
 import couchdb
@@ -191,6 +192,27 @@ def error405(error1):
 @error(500)
 def error500(error1):
     return 'Internal Server Error'
+
+#
+@route('/moo/pin/add', method='POST')
+def addimage():
+    print '--> inside adding image request'
+    fmt = __format(request)
+    response.content_type = __response_format(fmt)
+
+    upload = request.files.get('content')
+
+    print type(upload)
+    name, ext = os.path.splitext(upload.filename)
+
+    if ext not in ('.png','.jpg','.jpeg'):
+        return 'File extension not allowed.'
+    #TODO change this line for windows.
+    save_path = '/Users/poojasrinivas/Desktop/275/Project2/source code/moo-ws/moo/data'
+    upload.save(save_path) # appends upload.filename automatically
+    addedPinPath = save_path + name;
+    #TODO add this to the pin db
+    return 'success'
 
 #
 # Determine the format to return data (does not support images)

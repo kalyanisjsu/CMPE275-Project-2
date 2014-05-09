@@ -1,4 +1,4 @@
-__author__ = 'kalyaninirmal'
+
 
 import couchdb
 
@@ -9,6 +9,15 @@ class CreateDB(object):
         db = server['python-test']
         doc_id, doc_rev = db.save({'id': user._id, 'name': user._name, 'username': user._username, 'password': user._password, 'doc_type':'user'})
 
+    def insertPin(self, pin):
+        server = couchdb.Server()
+        db = server['python-test']
+        pin_id = db.save({'pinid': pin.pinid,'pinname': pin.pinname, 'pinurl': pin.pincomments, 'pincomments':pin.pincomments})
+
+    def insertComments(self,comments):
+        server = couchdb.Server()
+        db = server['python-test']
+        comment_id = db.save({'commentid': comments.commentid, 'comment': comments.comment, 'usercomment':comments.usercomid, 'pincomment':comments.pincommentid})
 
     def retrieve(self, user):
         print user._username
