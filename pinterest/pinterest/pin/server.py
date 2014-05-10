@@ -12,7 +12,9 @@ import User
 import random
 import couchdb
 import json
-
+import boto
+from boto.s3.key import Key
+from boto.s3.connection import S3Connection
 
 # bottle framework
 from bottle import request, response, route, run, template, get, post, error
@@ -47,27 +49,38 @@ def signup():
     for k, v in request.forms.allitems():
         print "form:", k, "=", v
 
-    id = random.randint(1, 100)
-    user._id = id
     user._name = request.forms.get('name')
     user._username = request.forms.get('username')
     user._password = request.forms.get('password')
-    return db.insertUserDB(user)
+    userResponse = db.insertUser(user)
+    response.set_header("content-type", "application/json")
+    response.body = userResponse
+    print "***Response returned is:\n"
+    print response.status
+    print response.body
+    print "\n***"
+    return response
+    #return "Sign Up Successfully!!! User ID is " + str(uid)
 
 
 @route('/v1/login', method='POST')
 def signin():
     for k, v in request.forms.allitems():
         print "form:", k, "=", v
-
     user._username = request.forms.get('username')
     user._password = request.forms.get('password')
-    value = db.retrieve(user)
-    if value==1:
-        return "Login Successful!!!"
-    else:
-        return "Username doesn't exist or Password is incorrect !!!"
+    userResponse = db.retrieveUser(user)
+    response.set_header("content-type", "application/json")
+    response.body = userResponse
+    print "***Response returned is:\n"
+    print response.status
+    print response.body
+    print "\n***"
+    return response
 
+@route('/v1/user/:user_id', method='POST')
+def getuserboards(user_id):
+    db.retrieveUserBoards(user_id)
 @route('/v1/user/:user_id/board', method='POST')
 def createBoard(user_id):
     print "Creating board for user -> " + user_id
@@ -90,17 +103,28 @@ def deleteBoard(user_id,board_id):
 
 @route('/v1/boards',method='GET')
 def getAllBoards():
-    print "get all boards"
     boards = db.getAllBoards()
-    print 'all boards from db->',boards
-    return boards
+    response.set_header("content-type","application/json")
+    response.body = boards
+    print "***Response returned is:\n"
+    print response.status
+    print response.body
+    print "\n***"
+    return response
 
 @route('/v1/boards/:board_id', method='GET')
 def getOneBoard(board_id):
     print 'get one board'
     board = db.getOneBoard()
     print 'all pins in board',board_id, '->', board
-    return board
+    response.set_header("content-type","application/json")
+    response.body = board
+    print "***Response returned is:\n"
+    print response.content_length
+    print response.status
+    print response.body
+    print "\n***"
+    return response
 
 @route('/v1/user/:user_id/pin/upload', method='POST')
 def addimage(user_id):
@@ -109,22 +133,34 @@ def addimage(user_id):
     name, ext = os.path.splitext(upload.filename)
     if ext not in ('.png','.jpg','.jpeg'):
         return 'File extension not allowed.'
-
     #TODO change this line for windows.
     #here check if the directory is existing
-    save_path = '/Users/poojasrinivas/Desktop/275/Project2/save'
+    save_path = 'C:\\tmp'
     upload.save(save_path)
-
-    addedPinPath = save_path + '/' + name
+    addedPinPath = save_path + '/' + name +'.jpg'
 
     print addedPinPath
 
-    pin._pinid = '1' #TODO generate the pin id
+    boto.set_stream_logger('boto')
+    s3 = S3Connection('AKIAJGNEOQWL7GOZQYVQ', '3L1CGJ6ta6//BA3fjMMWK8Jomdf3L0AqM6S/CbCz')
+    #s3 = boto.connect_s3()
+    print 'Connected to S3'
+    bucket = s3.get_bucket('bucket275')
+    #create key
+    k=Key(bucket)
+    k.key='3' # TODO set auto generated pin id here
+    k.set_contents_from_filename(addedPinPath)
+    time.sleep(2)
+
+    pin._pinid = '3' #TODO generate the pin id
     pin._pinname = name
-    pin._pinurl = addedPinPath
-    pin._boardid = []
+    #pin._pinurl = addedPinPath
+    pin._pinurl='https://bucket275.s3.amazonaws.com/'+pin._pinid
+    pin._boardid = ''
 
     db.insertPin(pin)
+    os.remove(addedPinPath)
+
     return 'success'
 
 @route('/v1/pins', method='GET')
@@ -132,15 +168,26 @@ def getAllPins():
     print 'Retrieving all pins...'
     pins=db.getAllPins()
     print "All pins ",pins
-    return pins
+    response.set_header("content-type","application/json")
+    response.body = pins
+    print "***Response returned is:\n"
+    print response.status
+    print response.body
+    print "\n***"
+    return response
 
 @route('/v1/pins/:pin_id',method='GET')
 def getPin(pin_id):
     print 'Retrieving pin...'
     #pin_id=request.GET.get('pin_id')
     pin=db.getOnePin(pin_id)
-    return pin
-
+    response.set_header("content-type","application/json")
+    response.body = pin
+    print "***Response returned is:\n"
+    print response.status
+    print response.body
+    print "\n***"
+    return response
 @route('/v1/user/:userid/board/:boardid',method='PUT')
 def attachPin(userid,boardid):
 

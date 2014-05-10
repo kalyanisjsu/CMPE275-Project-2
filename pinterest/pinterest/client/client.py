@@ -92,8 +92,8 @@ class ClientPy:
                 "\n2. Login" \
                 "\n3. See All Boards" \
                 "\n4. See All Pins" \
-                "\n5. Get a Board with Boardid as arg" \
-                "\n6. Get a Pin with Pinid as arg" \
+                "\n5. Get a Board (Requires Board ID)" \
+                "\n6. Get a Pin (Requires Pin ID)" \
                 "\n7. Get UserBoard" \
                 "\n8. Upload pin" \
                 "\n9. Create Board" \
@@ -107,22 +107,75 @@ class ClientPy:
                 "\n2. Login" \
                 "\n3. See All Boards" \
                 "\n4. See All Pins" \
-                "\n5. Get a Board with Boardid as arg" \
-                "\n6. Get a Pin with Pinid as arg" \
+                "\n5. Get a Board (Requires Board ID)" \
+                "\n6. Get a Pin (Requires Pin ID)" \
                 "\n0. Quit"
 
         cmd = raw_input("\nEnter option :")
         return cmd
 
     def signUp(self):
-        self.flg = True
-        self.userid = '45' # remove this
-        return
+		self.flg = True
+        name = raw_input("Enter Name : ")
+        username = raw_input("Enter Username : ")
+        password = raw_input("Enter Password : ")
+        url = 'http://localhost:8080/v1/reg'
+        #body = []
+        body = "name="+name+"&username="+ username + "&password="+ password
+        schema, netloc, url, params, query, fragments = \
+            urlparse.urlparse(url)
+        self.conn = httplib.HTTPConnection(netloc)
+        try:
+            self.conn.connect()
+            self.conn.putrequest("POST", url)
+            self.conn.putheader('Accept', 'application/json')
+            self.conn.putheader('Content-type','application/json')
+            self.conn.putheader('Content-length', str(len(body)))
+            self.conn.endheaders()
+            self.conn.send(body)
+        except socket.error, e:
+            print(str(e), log.ERROR)
+            return
+
+        response = self.conn.getresponse()
+        print "***Response received:\n"
+        print ('-----')
+        print response.msg
+        print ('-----')
+        print response.read()
+        print "\n***"
+        self.conn.close()
+
 
     def signIn(self):
-        self.flg = True
-        self.userid = '45' # remove this
-        return
+	    self.flg = True
+        username = raw_input("Enter Username : ")
+        password = raw_input("Enter Password : ")
+        url = 'http://localhost:8080/v1/login'
+        body = "username="+username + "&password="+ password
+        schema, netloc, url, params, query, fragments = \
+            urlparse.urlparse(url)
+        self.conn = httplib.HTTPConnection(netloc)
+        try:
+            self.conn.connect()
+            self.conn.putrequest("POST", url)
+            self.conn.putheader('Accept', 'application/json')
+            self.conn.putheader('Content-type','application/json')
+            self.conn.putheader('Content-length', str(len(body)))
+            self.conn.endheaders()
+            self.conn.send(body)
+        except socket.error, e:
+            print(str(e), log.ERROR)
+            return
+
+        response = self.conn.getresponse()
+        print "***Response received:\n"
+        print ('-----')
+        print response.msg
+        print ('-----')
+        print response.read()
+        print "\n***"
+        self.conn.close()
 
     def getAllBoards(self):
         print "**Get All Boards**"
@@ -137,7 +190,14 @@ class ClientPy:
             print(str(e), log.ERROR)
             return
         response = self.conn.getresponse()
-        print response.status
+        print "***Response received:\n"
+        print ('-----')
+        print response.msg
+        print ('-----')
+        print response.read()
+        print "\n***"
+        self.conn.close()
+
 
     def getAllPins(self):
         print "**Get All Pins**"
@@ -152,7 +212,13 @@ class ClientPy:
             print(str(e), log.ERROR)
             return
         response = self.conn.getresponse()
-        print response.status
+        print "***Response received:\n"
+        print ('-----')
+        print response.msg
+        print ('-----')
+        print response.read()
+        print "\n***"
+        self.conn.close()
 
     def getBoard(self):
         print "**Get Board**"
@@ -168,7 +234,13 @@ class ClientPy:
             print(str(e), log.ERROR)
             return
         response = self.conn.getresponse()
-        print response.status
+        print "***Response received:\n"
+        print ('-----')
+        print response.msg
+        print ('-----')
+        print response.read()
+        print "\n***"
+        self.conn.close()
 
     def getPin(self):
         print "**Get Pin**"
@@ -184,7 +256,13 @@ class ClientPy:
             print(str(e), log.ERROR)
             return
         response = self.conn.getresponse()
-        print response.status
+        print "***Response received:\n"
+        print ('-----')
+        print response.msg
+        print ('-----')
+        print response.read()
+        print "\n***"
+        self.conn.close()
 
     def quitConnection(self):
         self.conn.close()
@@ -194,6 +272,18 @@ class ClientPy:
         return
 
     def createBoard(self):
+        boardname = "testboard"
+        userid = 45
+        route_url = 'http://' + self.host + ":8080"
+        print route_url
+        schema, netloc, url, params, query, fragments = \
+            urlparse.urlparse(route_url)
+        self.conn = httplib.HTTPConnection(netloc)
+        try:
+            self.conn.request('POST','/v1/user/'+self.userid +'/board/',body ={"boardname:"+boardname})
+        except socket.error, e:
+            print(str(e), log.ERROR)
+            return
         return
 
     def attachPin(self):
@@ -220,7 +310,13 @@ class ClientPy:
             return
 
         response = self.conn.getresponse()
-        print response.status
+        print "***Response received:\n"
+        print ('-----')
+        print response.msg
+        print ('-----')
+        print response.read()
+        print "\n***"
+        self.conn.close()
 
     def addComment(self):
         print "**Adding Comment**"

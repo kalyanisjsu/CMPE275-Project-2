@@ -2,6 +2,7 @@
 
 
 class Pin(object):
+
     def __init__(self):
         self._pinid = None
         self._pinname = None
@@ -31,7 +32,6 @@ class Pin(object):
     @pinname.setter
     def x(self, value):
         self._pinname = value
-
 
     @pinurl.setter
     def x(self, value):
