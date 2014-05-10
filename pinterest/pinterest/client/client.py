@@ -48,12 +48,10 @@ class ClientPy:
                     self.getAllPins()
                     cmd = self.printusage()
                 elif cmd == '5':
-                    inboardid = raw_input('\nEnter the Board Id :')
-                    self.getBoard(inboardid)
+                    self.getBoard()
                     cmd = self.printusage()
                 elif cmd == '6':
-                    inpinid = raw_input('\nEnter the Board Id :')
-                    self.getPin(inpinid)
+                    self.getPin()
                     cmd = self.printusage()
                 elif cmd > 6 :
                     if(self.flg):
@@ -61,7 +59,8 @@ class ClientPy:
                             self.getUserBoard()
                             cmd = self.printusage()
                         elif cmd == '8':
-                            self.UploadPin()
+                            savepath = raw_input('\nEnter the path of the file to be copies :')
+                            self.upload_file(savepath)
                             cmd = self.printusage()
                         elif cmd == '9':
                             self.createBoard()
@@ -116,23 +115,75 @@ class ClientPy:
 
     def signUp(self):
         self.flg = True
+        self.userid = '45' # remove this
         return
 
     def signIn(self):
         self.flg = True
+        self.userid = '45' # remove this
         return
 
     def getAllBoards(self):
-        return
+        print "**Get All Boards**"
+        route_url = 'http://' + self.host + ':8080'
+        print route_url
+        schema, netloc, url, params, query, fragments = \
+            urlparse.urlparse(route_url)
+        self.conn = httplib.HTTPConnection(netloc)
+        try:
+            self.conn.request('GET','/v1/boards')
+        except socket.error, e:
+            print(str(e), log.ERROR)
+            return
+        response = self.conn.getresponse()
+        print response.status
 
     def getAllPins(self):
-        return
+        print "**Get All Pins**"
+        route_url = 'http://' + self.host + ":8080"
+        print route_url
+        schema, netloc, url, params, query, fragments = \
+            urlparse.urlparse(route_url)
+        self.conn = httplib.HTTPConnection(netloc)
+        try:
+            self.conn.request('GET','/v1/pins')
+        except socket.error, e:
+            print(str(e), log.ERROR)
+            return
+        response = self.conn.getresponse()
+        print response.status
 
-    def getBoard(self,board_id):
-        return
+    def getBoard(self):
+        print "**Get Board**"
+        board_id = raw_input("\nEnter board ID that you want to view:")
+        route_url = 'http://' + self.host + ":8080"
+        print route_url
+        schema, netloc, url, params, query, fragments = \
+            urlparse.urlparse(route_url)
+        self.conn = httplib.HTTPConnection(netloc)
+        try:
+            self.conn.request('GET','/v1/boards/'+board_id)
+        except socket.error, e:
+            print(str(e), log.ERROR)
+            return
+        response = self.conn.getresponse()
+        print response.status
 
-    def getPin(self,pin_id):
-        return
+    def getPin(self):
+        print "**Get Pin**"
+        pin_id = raw_input("\nEnter pin ID that you want to view:")
+        route_url = 'http://' + self.host + ":8080"
+        print route_url
+        schema, netloc, url, params, query, fragments = \
+            urlparse.urlparse(route_url)
+        self.conn = httplib.HTTPConnection(netloc)
+        try:
+            self.conn.request('GET','/v1/pins/'+ pin_id)
+        except socket.error, e:
+            print(str(e), log.ERROR)
+            return
+        response = self.conn.getresponse()
+        print response.status
 
     def quitConnection(self):
         self.conn.close()
@@ -141,14 +192,30 @@ class ClientPy:
     def getUserBoard(self):
         return
 
-    def UploadPin(self):
-        return
-
     def createBoard(self):
         return
 
     def attachPin(self):
-        return
+        print "**Attaching Pin**"
+
+        board_id = raw_input("\nEnter Board ID to which it has to be Pinned:")
+        pin_id = raw_input("\nEnter Pin ID to which it has to be Pinned:")
+
+        route_url = 'http://' + self.host + ":8080"
+
+        print route_url
+        schema, netloc, url, params, query, fragments = \
+            urlparse.urlparse(route_url)
+        self.conn = httplib.HTTPConnection(netloc)
+        try:
+            self.conn.request('GET','/v1/user/'+self.userid +'/board/'+ board_id,body ={"pin_id:"+pin_id})
+
+        except socket.error, e:
+            print(str(e), log.ERROR)
+            return
+
+        response = self.conn.getresponse()
+        print response.status
 
     def addComment(self):
         return
@@ -156,10 +223,10 @@ class ClientPy:
     def deleteBoard(self):
         return
 
-    def upload_file(self):
+    def upload_file(self,savepath):
         print '--> i m here 2'
         url = 'http://localhost:8080/v1/user/45/pin/upload'
-        filename = 'image.jpg'
+        filename = savepath
         #files = {'file': open('image.jpg', 'rb')}
         content = open(filename, 'rb').read()
 
@@ -200,8 +267,6 @@ class ClientPy:
 
         self.conn = httplib.HTTPConnection(netloc)
 
-        data = ''
-
         try:
             self.conn.connect()
             self.conn.putrequest("POST", url)
@@ -233,6 +298,6 @@ class ClientPy:
 
 if __name__ == "__main__":
     sam = ClientPy()
-    sam.upload_file()
+    #sam.upload_file()
 
 
