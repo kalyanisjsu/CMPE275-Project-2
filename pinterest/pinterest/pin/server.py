@@ -17,14 +17,16 @@ from bottle import request, response, route, run, template, get, post, error
 from couchdatabase import CreateDB
 
 import Board
+import Pin
 
 # setup the configuration for our service
 
 def setup(base, conf_fn):
     print '\n**** service initialization ****\n'
-    global db, user, signin_done
+    global db, user, signin_done, pin
     db = CreateDB()
     user = User.User()
+    pin = Pin.Pin()
     signin_done = 0
 	
 @route('/')
@@ -85,11 +87,35 @@ def addimage():
     if ext not in ('.png','.jpg','.jpeg'):
         return 'File extension not allowed.'
     #TODO change this line for windows.
-    save_path = '/Users/poojasrinivas/Desktop/275/Project2/source code/moo-ws/moo/data'
-    upload.save(save_path) # appends upload.filename automatically
-    addedPinPath = save_path + name;
-    #TODO add this to the pin db
+
+    save_path = '/Users/poojasrinivas/Desktop/275/Project2/save'
+    upload.save(save_path)
+    addedPinPath = save_path + name
+    print addedPinPath
+
+    pin._pinid = '3' #TODO generate the pin id
+    pin._pinname = name
+    pin._pinurl = addedPinPath
+    pin._pincomments = ''
+
+    db.insertPin(pin)
+
     return 'success'
+
+@route('/v1/pins', method='GET')
+def getAllPins():
+    print 'Retrieving all pins...'
+    pins=db.getAllPins()
+    print "All pins ",pins
+    return pins
+
+@route('/v1/pins/:pin_id',method='GET')
+def getPin():
+    print 'Retrieving pin...'
+    pin_id=request.GET.get('pin_id')
+    pin=db.getOnePin(pin_id)
+    return pin
+
 
 @error(200)
 def error200(error1):

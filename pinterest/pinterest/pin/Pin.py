@@ -29,7 +29,7 @@ class Pin(object):
     def x(self, value):
         self._pinid = value
 
-    @name.setter
+    @pinname.setter
     def x(self, value):
         self._pinname = value
 

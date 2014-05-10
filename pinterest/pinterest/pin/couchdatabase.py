@@ -46,6 +46,19 @@ class CreateDB(object):
                                   str(doc['board_name']) + "\n" )
         return all_boards
 
+
+    def getAllPins(self):
+        server=couchdb.Server()
+        db=server['pins']
+        all_pins=[]
+        for db_object in db:
+            doc=db[db_object]
+            all_pins.append("Pin ID: "+
+                                  str(doc['pinid'])+
+                                  ", Pin Name: " +
+                                  str(doc['pinname']) +", Pin URL: "+str(doc['pinurl'])+ "\n" )
+        return all_pins
+
     def getOneBoard (self,board_id):
         server = couchdb.Server()
         db = server['python-test']
@@ -55,3 +68,36 @@ class CreateDB(object):
             if doc['doc_type'] == 'pin' and doc['board_id'] == board_id:
                     all_pins.append(str(doc['pin_id']))
         return all_pins
+
+    def getOnePin(self,pin_id):
+        server=couchdb.Server()
+        db=server['pins']
+        for db_object in db:
+            doc=db[db_object]
+            if doc['pinid']==pin_id:
+                pin_url = str(doc['pinid'])
+            if not pin_url:
+                response = ""
+            else:
+                response = "Pin URL: "+pin_url+" ,"+"\n"+" Comments = ["
+                db=server['comments']
+                for db_object in db:
+                    doc=db[db_object]
+                    if doc['pinid']==pin_id:
+                        response +="User: "+doc['usercomid']+", Comment: "+doc['comment'] +"\n"
+                response += "]"
+        return response
+
+
+
+
+
+
+
+
+
+
+
+
+
+

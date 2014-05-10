@@ -3,5 +3,5 @@
 # test client access to our service
 
 echo -e "\n"
-curl -i -H "Accept: application/json" --data "name='Pooja'&username='pooja'&password='poo'"  http://192.168.0.94:8080/v1/reg
+curl -i -H "Accept: application/json" --data "name='Pooja'&username='pooja'&password='poo'"  http://localhost:8080/v1/reg
 echo -e "\n"
