@@ -6,8 +6,7 @@ class Pin(object):
         self._pinid = None
         self._pinname = None
         self._pinurl = None
-        self._pincomments = None
-
+        self._boardid = None
 
     @property
     def pinid(self):
@@ -22,8 +21,8 @@ class Pin(object):
         return self._pinurl
 
     @property
-    def pincomments(self):
-        return self._pincomments
+    def boardid(self):
+        return self._boardid
 
     @pinid.setter
     def x(self, value):
@@ -38,9 +37,9 @@ class Pin(object):
     def x(self, value):
         self._pinurl = value
 
-    @pincomments.setter
+    @boardid.setter
     def x(self, value):
-        self._pincomments = value
+        self._boardid = value
 
     @pinid.deleter
     def x(self):
@@ -54,8 +53,8 @@ class Pin(object):
     def x(self):
         del self._pinurl
 
-    @pincomments.deleter
+    @boardid.deleter
     def x(self):
-        del self._pincomments
+        del self._boardid
 
 

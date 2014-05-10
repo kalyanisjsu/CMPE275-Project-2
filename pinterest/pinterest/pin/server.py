@@ -47,7 +47,7 @@ def signup():
     user._name = request.forms.get('name')
     user._username = request.forms.get('username')
     user._password = request.forms.get('password')
-    return db.insertDB(user)
+    return db.insertUserDB(user)
 
 
 @route('/v1/login', method='POST')
@@ -78,25 +78,31 @@ def getOneBoard(board_id):
     return board
 
 @route('/v1/user/:user_id/pin/upload', method='POST')
-def addimage():
+def addimage(user_id):
+
+    print '---> user_id is %s' % user_id
     print '--> inside adding image request'
-    
+
     upload = request.files.get('content')
+
     name, ext = os.path.splitext(upload.filename)
 
     if ext not in ('.png','.jpg','.jpeg'):
         return 'File extension not allowed.'
+
     #TODO change this line for windows.
 
     save_path = '/Users/poojasrinivas/Desktop/275/Project2/save'
     upload.save(save_path)
-    addedPinPath = save_path + name
+
+    addedPinPath = save_path + '/' + name
+
     print addedPinPath
 
     pin._pinid = '3' #TODO generate the pin id
     pin._pinname = name
     pin._pinurl = addedPinPath
-    pin._pincomments = ''
+    pin._boardid = ''
 
     db.insertPin(pin)
 
@@ -110,9 +116,9 @@ def getAllPins():
     return pins
 
 @route('/v1/pins/:pin_id',method='GET')
-def getPin():
+def getPin(pin_id):
     print 'Retrieving pin...'
-    pin_id=request.GET.get('pin_id')
+    #pin_id=request.GET.get('pin_id')
     pin=db.getOnePin(pin_id)
     return pin
 
