@@ -7,6 +7,19 @@ class CreateDB(object):
         db = server['python-test']
         doc_id, doc_rev = db.save({'id': user._id, 'name': user._name, 'username': user._username, 'password': user._password, 'doc_type':'user'})
 
+    def insertBoard(self, board):
+        server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
+        db = server['boards']
+        doc_id, doc_rev = db.save({'boardId': board._boardId, 'boardName': board._boardName, 'userId': board._userId})
+
+    def deleteBoard(self, board_id):
+        server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
+        db = server['boards']
+        for dbObj in db:
+            doc= db[dbObj]
+            if doc['boardId'] == board_id:
+                server.deleteDoc('boards',doc)
+
     def insertPin(self, pin):
         server = couchdb.Server()
         db = server['python-test']
@@ -31,7 +44,6 @@ class CreateDB(object):
                         break
                 else:
                     print "*******not existing*******"
-
 
     def getAllBoards(self):
         server = couchdb.Server()

@@ -23,11 +23,12 @@ import Pin
 
 def setup(base, conf_fn):
     print '\n**** service initialization ****\n'
-    global db, user, signin_done, pin
+    global db, user, signin_done, pin , board
     db = CreateDB()
     user = User.User()
     pin = Pin.Pin()
     signin_done = 0
+    board = Board.Board()
 	
 @route('/')
 def root():
@@ -63,6 +64,23 @@ def signin():
     else:
         return "Username doesn't exist or Password is incorrect !!!"
 
+@route('/v1/user/:user_id/board', method='POST')
+def createBoard(user_id):
+    print "Creating board for user -> " + user_id
+    id = random.randint(1, 100)
+    board._boardId = id
+    print str(board._boardId)
+    board._name = request.forms.get('boardName')
+    board._userId = user_id
+    db.insertBoard(board)
+    return "Created Board! BoardId : " + str(id)
+
+@route('/v1/user/:user_id/board/:board_id', method='POST')
+def deleteBoard(user_id,board_id):
+    print "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id)
+    db.deleteBoard(board_id)
+    return "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id)
+
 @route('/v1/boards',method='GET')
 def getAllBoards():
     print "get all boards"
@@ -88,7 +106,7 @@ def addimage():
         return 'File extension not allowed.'
     #TODO change this line for windows.
 
-    save_path = '/Users/poojasrinivas/Desktop/275/Project2/save'
+    save_path = '/Users/snehakulkarni/Desktop/275/Project2/save'
     upload.save(save_path)
     addedPinPath = save_path + name
     print addedPinPath
