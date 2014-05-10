@@ -3,7 +3,7 @@ import couchdb
 class CreateDB(object):
 
     def insertUserDB(self, user):
-        server = couchdb.Server("http://192.168.0.94:5984/")  # insert hostname and port 5984 if db is not on local machine
+        server = couchdb.Server("")  # insert hostname and port 5984 if db is not on local machine
         db = server['users']
         print db.info()
         doc_id, doc_rev = db.save({'id': user._id, 'name': user._name, 'username': user._username, 'password': user._password, 'doc_type':'user'})
@@ -11,7 +11,7 @@ class CreateDB(object):
     def insertBoard(self, board):
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
         db = server['boards']
-        doc_id, doc_rev = db.save({'boardId': board._boardId, 'boardName': board._boardName, 'userId': board._userId})
+        doc_id, doc_rev = db.save({'board_id': board._board_id, 'board_name': board._board_name, 'userId': board._userId})
 
     def deleteBoard(self,boardid):
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
@@ -20,7 +20,7 @@ class CreateDB(object):
             print "DB data: ", db
             print "DBObj data: ", dbObj
             doc= db[dbObj]
-            if doc['boardId'] == boardid:
+            if doc['board_id'] == boardid:
                 #server.deleteDoc('boards',doc)
                 print "deleting doc \n"
                 return 1
@@ -50,6 +50,7 @@ class CreateDB(object):
                         break
                 else:
                     print "*******not existing*******"
+
 
     def getAllBoards(self):
         server = couchdb.Server()
@@ -107,6 +108,23 @@ class CreateDB(object):
                         response +="User: "+doc['usercomid']+", Comment: "+doc['comment'] +"\n"
                 response += "]\n"
         return response
+
+    def updatePin(self,pin_id,userid,boardid):
+        print "inside the updatePin"
+        server=couchdb.Server()
+        db=server['pins']
+        for db_object in db:
+            doc=db[db_object]
+            print 'the pin_id %s' % pin_id
+            print 'the doc pin_id %s' %doc['pinid']
+            if doc['pinid']== pin_id:
+                print '** inside the pin id if** '
+                boards = doc['boardid']
+                boards.append(boardid)
+                doc['boardid'] = boards
+                print type(doc)
+                db.save(doc)
+        return "done"
 
 
 

@@ -2,44 +2,57 @@
 
 class Board(object):
     def __init__(self):
-        self._boardId = None
-        self._boardName = None
+        self._board_id = None
+        self._board_name = None
+        self._username = None
         self._userId = None
 
 
     @property
-    def boardId(self):
-        return self._boardId
+    def board_id(self):
+        return self._id
 
     @property
-    def boardName(self):
-        return self._boardName
+    def board_name(self):
+        return self._name
 
+    @property
+    def username(self):
+        return self._username
+	
     @property
     def userId(self):
         return self._userId
 
-    @boardId.setter
+    @board_id.setter
     def x(self, value):
-        self._boardId = value
+        self._id = value
 
-    @boardName.setter
+    @board_name.setter
     def x(self, value):
-        self._boardName = value
+        self._name = value
 
 
+    @username.setter
+    def x(self, value):
+        self._username = value
+		
     @userId.setter
     def x(self, value):
         self._userId = value
 
-    @boardId.deleter
+    @board_id.deleter
     def x(self):
-        del self._boardId
+        del self._id
 
-    @boardName.deleter
+    @board_name.deleter
     def x(self):
-        del self._boardName
+        del self._name
 
+    @username.deleter
+    def x(self):
+        del self._username
+		
     @userId.deleter
     def x(self):
         del self._userId

@@ -8,8 +8,9 @@ import tempfile
 import sys
 import urllib2
 import mimetypes
+import json
 from distutils import log
-from bottle import run
+
 
 try:
     bytes
@@ -201,6 +202,10 @@ class ClientPy:
         board_id = raw_input("\nEnter Board ID to which it has to be Pinned:")
         pin_id = raw_input("\nEnter Pin ID to which it has to be Pinned:")
 
+        data = {"pin_id" : pin_id}
+        data_json = json.dumps(data)
+
+        head = {'Content-type': 'application/json'}
         route_url = 'http://' + self.host + ":8080"
 
         print route_url
@@ -208,7 +213,7 @@ class ClientPy:
             urlparse.urlparse(route_url)
         self.conn = httplib.HTTPConnection(netloc)
         try:
-            self.conn.request('GET','/v1/user/'+self.userid +'/board/'+ board_id,body ={"pin_id:"+pin_id})
+            self.conn.request('PUT','/v1/user/'+self.userid +'/board/'+ board_id,body =data_json, headers = head)
 
         except socket.error, e:
             print(str(e), log.ERROR)
@@ -218,6 +223,25 @@ class ClientPy:
         print response.status
 
     def addComment(self):
+        print "**Adding Comment**"
+        pin_id = raw_input("\nEnter Pin ID:")
+        comment = raw_input("\nEnter Comment:")
+        route_url = 'http://' + self.host + ":8080"
+        data = {"comment" : comment}
+        data_json = json.dumps(data)
+        head = {'Content-type': 'application/json'}
+        schema, netloc, url, params, query, fragments = \
+            urlparse.urlparse(route_url)
+        self.conn = httplib.HTTPConnection(netloc)
+        try:
+            self.conn.request('POST','/v1/user/'+self.userid +'/pin/'+ pin_id,body =data_json,headers=head)
+
+        except socket.error, e:
+            print(str(e), log.ERROR)
+            return
+
+        response = self.conn.getresponse()
+        print response.status
         return
 
     def deleteBoard(self):

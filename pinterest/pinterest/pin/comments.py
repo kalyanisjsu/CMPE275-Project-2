@@ -1,7 +1,7 @@
 
 
 
-class Pin(object):
+class comments(object):
     def __init__(self):
         self._commentid = None
         self._comment = None
@@ -29,10 +29,9 @@ class Pin(object):
     def x(self, value):
         self._commentid = value
 
-    @name.setter
+    @comment.setter
     def x(self, value):
         self._comment = value
-
 
     @usercomid.setter
     def x(self, value):

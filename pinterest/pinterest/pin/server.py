@@ -11,6 +11,8 @@ import os
 import User
 import random
 import couchdb
+import json
+
 
 # bottle framework
 from bottle import request, response, route, run, template, get, post, error
@@ -18,15 +20,17 @@ from couchdatabase import CreateDB
 
 import Board
 import Pin
+import comments
 
 # setup the configuration for our service
 
 def setup(base, conf_fn):
     print '\n**** service initialization ****\n'
-    global db, user, signin_done, pin , board
+    global db, user, signin_done, pin , board, comment
     db = CreateDB()
     user = User.User()
     pin = Pin.Pin()
+    comment = comments.comments()
     signin_done = 0
     board = Board.Board()
 	
@@ -67,10 +71,12 @@ def signin():
 @route('/v1/user/:user_id/board', method='POST')
 def createBoard(user_id):
     print "Creating board for user -> " + user_id
+
     id = random.randint(1, 100)
-    board._boardId = id
-    print str(board._boardId)
-    board._boardName = request.forms.get('boardName')
+    board._board_id = id
+    print str(board._board_id)
+
+    board._board_name = request.forms.get('boardName')
     board._userId = user_id
     db.insertBoard(board)
     return "Created Board! BoardId : " + str(id) +"\n"
@@ -99,32 +105,26 @@ def getOneBoard(board_id):
 @route('/v1/user/:user_id/pin/upload', method='POST')
 def addimage(user_id):
 
-    print '---> user_id is %s' % user_id
-    print '--> inside adding image request'
-
     upload = request.files.get('content')
-
     name, ext = os.path.splitext(upload.filename)
-
     if ext not in ('.png','.jpg','.jpeg'):
         return 'File extension not allowed.'
 
     #TODO change this line for windows.
-
-    save_path = '/Users/snehakulkarni/Desktop/275/Project2/save'
+    #here check if the directory is existing
+    save_path = '/Users/poojasrinivas/Desktop/275/Project2/save'
     upload.save(save_path)
 
     addedPinPath = save_path + '/' + name
 
     print addedPinPath
 
-    pin._pinid = '3' #TODO generate the pin id
+    pin._pinid = '1' #TODO generate the pin id
     pin._pinname = name
     pin._pinurl = addedPinPath
-    pin._boardid = ''
+    pin._boardid = []
 
     db.insertPin(pin)
-
     return 'success'
 
 @route('/v1/pins', method='GET')
@@ -141,6 +141,21 @@ def getPin(pin_id):
     pin=db.getOnePin(pin_id)
     return pin
 
+@route('/v1/user/:userid/board/:boardid',method='PUT')
+def attachPin(userid,boardid):
+
+    pin_id = request.json['pin_id']
+    print "the pin id is " + pin_id
+    return db.updatePin(pin_id,userid,boardid)
+
+
+@route('/v1/user/:userid/pin/:pinid',method='POST')
+def addComment(userid,pinid):
+    comment._comment = request.json['comment']
+    comment._usercomid = userid
+    comment._pincommentid = pinid
+    db.insertComments(comment)
+    return
 
 @error(200)
 def error200(error1):
