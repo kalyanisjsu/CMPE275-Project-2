@@ -12,13 +12,18 @@ class CreateDB(object):
         db = server['boards']
         doc_id, doc_rev = db.save({'boardId': board._boardId, 'boardName': board._boardName, 'userId': board._userId})
 
-    def deleteBoard(self, board_id):
+    def deleteBoard(self,boardid):
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
         db = server['boards']
         for dbObj in db:
+            print "DB data: ", db
+            print "DBObj data: ", dbObj
             doc= db[dbObj]
-            if doc['boardId'] == board_id:
-                server.deleteDoc('boards',doc)
+            if doc['boardId'] == boardid:
+                #server.deleteDoc('boards',doc)
+                print "deleting doc \n"
+                return 1
+
 
     def insertPin(self, pin):
         server = couchdb.Server()

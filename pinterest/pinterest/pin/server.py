@@ -70,16 +70,17 @@ def createBoard(user_id):
     id = random.randint(1, 100)
     board._boardId = id
     print str(board._boardId)
-    board._name = request.forms.get('boardName')
+    board._boardName = request.forms.get('boardName')
     board._userId = user_id
     db.insertBoard(board)
-    return "Created Board! BoardId : " + str(id)
+    return "Created Board! BoardId : " + str(id) +"\n"
 
 @route('/v1/user/:user_id/board/:board_id', method='POST')
 def deleteBoard(user_id,board_id):
     print "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id)
-    db.deleteBoard(board_id)
-    return "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id)
+    boardid= board_id
+    db.deleteBoard(boardid)
+    return "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id) + "\n"
 
 @route('/v1/boards',method='GET')
 def getAllBoards():
