@@ -36,52 +36,57 @@ class ClientPy:
             self.flg = False
             cmd = self.printusage()
             while(cmd <> '0'):
-                if cmd == '1':
-                    self.signUp()
-                    cmd = self.printusage()
-                elif cmd == '2':
-                    self.signIn()
-                    cmd = self.printusage()
-                elif cmd == '3':
-                    self.getAllBoards()
-                    cmd = self.printusage()
-                elif cmd == '4':
-                    self.getAllPins()
-                    cmd = self.printusage()
-                elif cmd == '5':
-                    self.getBoard()
-                    cmd = self.printusage()
-                elif cmd == '6':
-                    self.getPin()
-                    cmd = self.printusage()
-                elif cmd > 6 :
-                    if(self.flg):
-                        if cmd == '7':
-                            self.getUserBoard()
-                            cmd = self.printusage()
-                        elif cmd == '8':
-                            savepath = raw_input('\nEnter the path of the file to be copies :')
-                            self.upload_file(savepath)
-                            cmd = self.printusage()
-                        elif cmd == '9':
-                            self.createBoard()
-                            cmd = self.printusage()
-                        elif cmd == '10':
-                            self.attachPin()
-                            cmd = self.printusage()
-                        elif cmd == '11':
-                            self.addComment()
-                            cmd = self.printusage()
-                        elif cmd == '12':
-                            self.deleteBoard()
-                            cmd = self.printusage()
-                        elif cmd > '12':
-                            print "Please enter correct option!!!!"
-                            cmd = self.printusage()
-                    else:
-                        print "Please enter correct option and Login for more functionalities"
+                self.host = sys.argv[1]
+                self.url = ''
+                self.flg = False
+                cmd = self.printusage()
+                while(cmd <> '0'):
+                    if cmd == '1':
+                        self.signUp()
                         cmd = self.printusage()
-            self.quitConnection()
+                    elif cmd == '2':
+                        self.signIn()
+                        cmd = self.printusage()
+                    elif cmd == '3':
+                        self.getAllBoards()
+                        cmd = self.printusage()
+                    elif cmd == '4':
+                        self.getAllPins()
+                        cmd = self.printusage()
+                    elif cmd == '5':
+                        self.getBoard()
+                        cmd = self.printusage()
+                    elif cmd == '6':
+                        self.getPin()
+                        cmd = self.printusage()
+                    elif cmd > 6 :
+                        if(self.flg):
+                            if cmd == '7':
+                                self.getUserBoard()
+                                cmd = self.printusage()
+                            elif cmd == '8':
+                                savepath = raw_input('\nEnter the path of the file to be copied :')
+                                self.upload_file(savepath)
+                                cmd = self.printusage()
+                            elif cmd == '9':
+                                self.createBoard()
+                                cmd = self.printusage()
+                            elif cmd == '10':
+                                self.attachPin()
+                                cmd = self.printusage()
+                            elif cmd == '11':
+                                self.addComment()
+                                cmd = self.printusage()
+                            elif cmd == '12':
+                                self.deleteBoard()
+                                cmd = self.printusage()
+                            elif cmd > '12':
+                                print "Please enter correct option!!!!"
+                                cmd = self.printusage()
+                        else:
+                            print "Please enter correct option and login for more functions"
+                            cmd = self.printusage()
+                self.quitConnection()
         else:
             print "usage:", sys.argv[0],"[host ip] example 'x.x.x.x.'"
 
@@ -310,6 +315,7 @@ class ClientPy:
         print "\n***"
         self.conn.close()
 
+
     def attachPin(self):
         print "**Attaching Pin**"
 
@@ -342,6 +348,7 @@ class ClientPy:
         print "\n***"
         self.conn.close()
 
+
     def addComment(self):
         print "**Adding Comment**"
         pin_id = raw_input("\nEnter Pin ID:")
@@ -361,8 +368,6 @@ class ClientPy:
             return
 
         response = self.conn.getresponse()
-        print response.status
-        response = self.conn.getresponse()
         print "***Response received:\n"
         print ('-----')
         print response.msg
@@ -381,7 +386,6 @@ class ClientPy:
         print "\n***"
         self.conn.close()
 
-    #TODO display response
     def upload_file(self,savepath):
         print '--> i m here 2'
         url = 'http://localhost:8080/v1/user/45/pin/upload'

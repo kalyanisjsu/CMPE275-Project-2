@@ -55,6 +55,7 @@ class CreateDB(object):
                 all_pins.append(pin)
         return json.dumps(all_pins)
 
+
     #todo create response object
     def getOnePin(self,pin_id):
         """
@@ -169,7 +170,7 @@ class CreateDB(object):
         board_dict['board_id'] = board._board_id
         return json.dumps(board_dict)
 
-#todo what is the response to be returned? not mentioned in standards doc
+    #todo what is the response to be returned? not mentioned in standards doc
     def updatePin(self,pin_id,userid,boardid):
         """
         10. Attach Pin
@@ -214,29 +215,3 @@ class CreateDB(object):
         db = server['comments']
         comment_id = db.save({'comment': comments.comment, 'usercomid':comments.usercomid, 'pinid':comments.pincommentid})
         #response is status code only
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

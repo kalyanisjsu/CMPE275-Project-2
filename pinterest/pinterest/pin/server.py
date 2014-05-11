@@ -120,7 +120,6 @@ def deleteBoard(user_id,board_id):
     return response
     #return "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id) + "\n"
 
-
 @route('/v1/boards',method='GET')
 def getAllBoards():
     boards = db.getAllBoards()
@@ -145,6 +144,7 @@ def getOneBoard(board_id):
     print "\n***"
     return response
 
+
 #TODO create response
 @route('/v1/user/:user_id/pin/upload', method='POST')
 def addimage(user_id):
@@ -164,7 +164,6 @@ def addimage(user_id):
     boto.set_stream_logger('boto')
     #TODO removed s3 line
     s3 = S3Connection('', '')
-
     #s3 = boto.connect_s3()
     print 'Connected to S3'
     bucket = s3.get_bucket('bucket275')
@@ -211,6 +210,7 @@ def getPin(pin_id):
     print "\n***"
     return response
 
+#TODO what is response for this? not mentioned in standards doc
 @route('/v1/user/:userid/board/:boardid',method='PUT')
 def attachPin(userid,boardid):
 
