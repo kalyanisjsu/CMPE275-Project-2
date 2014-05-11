@@ -85,8 +85,17 @@ class CreateDB(object):
         """
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
         db = server['users']
-        id = random.randint(1, 100)
-        user._id = id
+        userid_db = 0
+        for dbObj in db:
+            doc = db[dbObj]
+            userid_db = doc['id']
+            #print doc
+            if doc['username'] == user._username:
+                userData = {}
+                userData['username'] = "Username already exists !!!"
+                return json.dumps(userData)
+
+        user._id = int(userid_db)+1
         doc_id, doc_rev = db.save({'id': str(user.id), 'name': user.name, 'username': user.username, 'password': user.password})
         doc = db[doc_id]
         userData = {}
