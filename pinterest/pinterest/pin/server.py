@@ -94,8 +94,9 @@ def createBoard(user_id):
     print "Creating board for user -> " + user_id
     id = random.randint(1, 100)
     board._board_id = id
-    print str(board._board_id)
-    board._board_name = request.forms.get('boardName')
+    print str(board._board_id) + "\n"
+    board._board_name = request.json['boardName'] # request.forms.get('boardName')
+    print "BoardName: " + board._board_name
     board._userId = user_id
     new_board = db.insertBoard(board)
     response.set_header("content-type","application/json")
@@ -106,18 +107,22 @@ def createBoard(user_id):
     print "\n***"
     return response
 
-@route('/v1/user/:user_id/board/:board_id', method='POST')
+@route('/v1/user/:user_id/board/:board_id', method='DELETE')
 def deleteBoard(user_id,board_id):
-    print "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id)
-    boardid= board_id
-    del_board = db.deleteBoard(boardid)
-    response.set_header("content-type","application/json")
-    response.body = del_board
-    print "***Response returned is:\n"
-    print response.status
-    print response.body
-    print "\n***"
-    return response
+    try :
+        print "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id)
+        boardid= board_id
+        #curl -i -H "Accept: application/json" -H "X-HTTP-Method-Override: DELETE" -X DELETE http://localhost:8080/v1/user/14/board/96
+        del_board = db.deleteBoard(boardid)
+        response.set_header("content-type","application/json")
+        response.body = del_board
+        print "***Response returned is----->deleteBoard:\n"
+        print response.status
+        print response.body
+        print "\n***"
+        return response
+    except:
+        raise
     #return "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id) + "\n"
 
 @route('/v1/boards',method='GET')

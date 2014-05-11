@@ -34,58 +34,54 @@ class ClientPy:
             self.host = sys.argv[1]
             self.url = ''
             self.flg = False
+            self.userid = 0
             cmd = self.printusage()
             while(cmd <> '0'):
-                self.host = sys.argv[1]
-                self.url = ''
-                self.flg = False
-                cmd = self.printusage()
-                while(cmd <> '0'):
-                    if cmd == '1':
-                        self.signUp()
-                        cmd = self.printusage()
-                    elif cmd == '2':
-                        self.signIn()
-                        cmd = self.printusage()
-                    elif cmd == '3':
-                        self.getAllBoards()
-                        cmd = self.printusage()
-                    elif cmd == '4':
-                        self.getAllPins()
-                        cmd = self.printusage()
-                    elif cmd == '5':
-                        self.getBoard()
-                        cmd = self.printusage()
-                    elif cmd == '6':
-                        self.getPin()
-                        cmd = self.printusage()
-                    elif cmd > 6 :
-                        if(self.flg):
-                            if cmd == '7':
-                                self.getUserBoard()
-                                cmd = self.printusage()
-                            elif cmd == '8':
-                                savepath = raw_input('\nEnter the path of the file to be copied :')
-                                self.upload_file(savepath)
-                                cmd = self.printusage()
-                            elif cmd == '9':
-                                self.createBoard()
-                                cmd = self.printusage()
-                            elif cmd == '10':
-                                self.attachPin()
-                                cmd = self.printusage()
-                            elif cmd == '11':
-                                self.addComment()
-                                cmd = self.printusage()
-                            elif cmd == '12':
-                                self.deleteBoard()
-                                cmd = self.printusage()
-                            elif cmd > '12':
-                                print "Please enter correct option!!!!"
-                                cmd = self.printusage()
-                        else:
-                            print "Please enter correct option and login for more functions"
+                if cmd == '1':
+                    self.signUp()
+                    cmd = self.printusage()
+                elif cmd == '2':
+                    self.signIn()
+                    cmd = self.printusage()
+                elif cmd == '3':
+                    self.getAllBoards()
+                    cmd = self.printusage()
+                elif cmd == '4':
+                    self.getAllPins()
+                    cmd = self.printusage()
+                elif cmd == '5':
+                    self.getBoard()
+                    cmd = self.printusage()
+                elif cmd == '6':
+                    self.getPin()
+                    cmd = self.printusage()
+                elif cmd > 6 :
+                    if(self.flg):
+                        if cmd == '7':
+                            self.getUserBoard()
                             cmd = self.printusage()
+                        elif cmd == '8':
+                            savepath = raw_input('\nEnter the path of the file to be copied :')
+                            self.upload_file(savepath)
+                            cmd = self.printusage()
+                        elif cmd == '9':
+                            self.createBoard()
+                            cmd = self.printusage()
+                        elif cmd == '10':
+                            self.attachPin()
+                            cmd = self.printusage()
+                        elif cmd == '11':
+                            self.addComment()
+                            cmd = self.printusage()
+                        elif cmd == '12':
+                            self.deleteBoard()
+                            cmd = self.printusage()
+                        elif cmd > '12':
+                            print "Please enter correct option!!!!"
+                            cmd = self.printusage()
+                    else:
+                        print "Please enter correct option and login for more functions"
+                        cmd = self.printusage()
                 self.quitConnection()
         else:
             print "usage:", sys.argv[0],"[host ip] example 'x.x.x.x.'"
@@ -145,6 +141,7 @@ class ClientPy:
         print "***Response received:\n"
         print ('-----')
         print response.msg
+        self.userid = 25 # Get userid from the response and set it here.
         print ('-----')
         print response.read()
         print "\n***"
@@ -175,7 +172,12 @@ class ClientPy:
         response = self.conn.getresponse()
         print "***Response received:\n"
         print ('-----')
+        body = response.read()
+        print body
         print response.msg
+        d = json.loads(str(body))
+        print d['_id']
+        self.userid = str(d['_id']) # Get userid from the response and set it here.
         print ('-----')
         print response.read()
         print "\n***"
@@ -294,15 +296,20 @@ class ClientPy:
         self.conn.close()
 
     def createBoard(self):
-        boardname = "testboard"
-        userid = 45
+        print "**Create Board**"
+        boardname = str(raw_input("\nEnter board name that you want to create:"))
+        #userid = '27'
+        data = {"boardName" : boardname}
+        data_json = json.dumps(data)
+
+        head = {'Content-type': 'application/json'}
         route_url = 'http://' + self.host + ":8080"
         print route_url
         schema, netloc, url, params, query, fragments = \
             urlparse.urlparse(route_url)
         self.conn = httplib.HTTPConnection(netloc)
         try:
-            self.conn.request('POST','/v1/user/'+str(userid) +'/board/',body ={"boardname:"+boardname})
+            self.conn.request('POST','/v1/user/'+str(self.userid) +'/board',body =data_json, headers = head )
         except socket.error, e:
             print(str(e), log.ERROR)
             return
@@ -377,6 +384,20 @@ class ClientPy:
         self.conn.close()
 
     def deleteBoard(self):
+        print "**Deleting Board**"
+        board_id= str(raw_input("\nEnter Board ID for the board to be deleted:"))
+        route_url = 'http://' + self.host + ":8080"
+        head = {'Content-type': 'application/json'}
+        schema, netloc, url, params, query, fragments = \
+            urlparse.urlparse(route_url)
+        self.conn = httplib.HTTPConnection(netloc)
+        try:
+            self.conn.request('DELETE','/v1/user/'+self.userid +'/board/'+board_id ,headers=head)
+
+        except socket.error, e:
+            print(str(e), log.ERROR)
+            return
+
         response = self.conn.getresponse()
         print "***Response received:\n"
         print ('-----')

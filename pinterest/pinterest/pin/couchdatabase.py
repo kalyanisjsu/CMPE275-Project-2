@@ -197,15 +197,15 @@ class CreateDB(object):
         """
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
         db = server['boards']
+        print "board id: ",boardid
         for dbObj in db:
             print "DB data: ", db
-            print "DBObj data: ", dbObj
             doc= db[dbObj]
-            if doc['board_id'] == boardid:
-                #server.deleteDoc('boards',doc)
+            print "doc data: ", doc
+            if str(doc['board_id']) == boardid:
+                db.delete(doc)
                 print "deleting doc \n"
-                return 1
-        #response is status code only
+                return json.dumps("Deleted Board: " + boardid)
 
     def insertComments(self,comments):
         """
