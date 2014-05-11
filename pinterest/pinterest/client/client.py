@@ -276,13 +276,13 @@ class ClientPy:
 
     def getUserBoard(self):
         route_url = 'http://' + self.host + ":8080"
-        user_id = '3'
+        #user_id = '3'
         print route_url
         schema, netloc, url, params, query, fragments = \
             urlparse.urlparse(route_url)
         self.conn = httplib.HTTPConnection(netloc)
         try:
-            self.conn.request('GET','/v1/user/'+user_id)
+            self.conn.request('GET','/v1/user/'+str(self.userid))
         except socket.error, e:
             print(str(e), log.ERROR)
             return

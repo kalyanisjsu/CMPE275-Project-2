@@ -136,36 +136,24 @@ class CreateDB(object):
         7. Get User Boards
         """
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
-        db = server['users']
+        db = server['boards']
         for dbObj in db:
             doc = db[dbObj]
-            uid = doc['id']
+            uid = doc['userId']
+            print "********", doc['userId']
             user = {}
             all_boards = []
             if str(user_id) == str(uid):
                 #user is found in db
                 print "****Success*******"
-                user['userName'] = doc['name']
-                server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
-                db = server['boards']
-                for dbObj in db:
-                    print '1'
-                    #get all boards of user
-                    doc = db[dbObj]
-                    if str(doc['userId']) == str(user_id):
-                        print 'here'
-                        board = {}
-                        board['board_id'] = doc['board_id']
-                        board['board_name'] = str(doc['board_name'])
-                        all_boards.append(board)
-                result = []
-                result.append(user)
-                result.append(all_boards)
-                return json.dumps(result)
-            else:
-                print "******Failure******"
-                result = []
-                return json.dumps(result)
+                board = {}
+                board['board_id'] = doc['board_id']
+                board['board_name'] = str(doc['board_name'])
+                all_boards.append(board)
+                return json.dumps(all_boards)
+        print "******Failure******"
+        board = "No boards are created!!"
+        return json.dumps(board)
 
     def insertPin(self, pin):
         """
