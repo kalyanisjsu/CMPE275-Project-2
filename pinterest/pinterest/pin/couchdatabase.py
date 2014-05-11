@@ -81,15 +81,19 @@ class CreateDB(object):
 
     def insertUser(self, user):
         """
-        5. Registration
+        5. Register/Signup User
         """
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
         db = server['users']
-        boards = ['1', '2', '3']
         id = random.randint(1, 100)
         user._id = id
-        doc_id, doc_rev = db.save({'id': str(user.id), 'name': user.name, 'username': user.username, 'password': user.password, 'boards': boards})
-        return json.dumps(user.__dict__)
+        doc_id, doc_rev = db.save({'id': str(user.id), 'name': user.name, 'username': user.username, 'password': user.password})
+        doc = db[doc_id]
+        userData = {}
+        userData['id'] = doc['id']
+        userData['name'] = str(doc['name'])
+        userData['username'] = str(doc['username'])
+        return json.dumps(userData)
 
     def retrieveUser(self, user):
         """
@@ -97,20 +101,26 @@ class CreateDB(object):
         """
         print user._username
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
+        print "I am here"
         db = server['users']
+        print "im here 2"
         for dbObj in db:
             doc = db[dbObj]
             print doc
             if doc['username'] == user._username:
+                print "im here 3"
                 print "*******Existing*******"
                 if doc['password'] == user._password:
-                    user._id = doc['id']
-                    user._password = "****"
-                    return json.dumps(user.__dict__)
-        user._id = "null"
-        user._username = "Wrong Username"
-        user._password = "Wrong Password"
-        return json.dumps(user.__dict__)
+                     userData = {}
+                     userData['id'] = doc['id']
+                     userData['name'] = str(doc['name'])
+                     userData['username'] = str(doc['username'])
+                     return json.dumps(userData)
+        userData = {}
+        userData['id'] = "Null"
+        userData['username'] = "Wrong Username"
+        userData['password'] = "Wrong Password"
+        return json.dumps(userData)
 
     def retrieveUserBoards(self, user_id):
         """
