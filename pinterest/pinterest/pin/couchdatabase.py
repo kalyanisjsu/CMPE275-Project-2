@@ -10,6 +10,7 @@ class CreateDB(object):
         """
         server=couchdb.Server()
         db=server['pins']
+        pins = {}
         all_pins=[]
         for db_object in db:
             doc=db[db_object]
@@ -19,7 +20,8 @@ class CreateDB(object):
             pin['pin_name'] = str(doc['pinname'])
             pin['pin_url'] = str(doc['pinurl'])
             all_pins.append(pin)
-        return json.dumps(all_pins)
+        pins['pins'] = all_pins
+        return json.dumps(pins)
 
     def getAllBoards(self):
         """
@@ -28,6 +30,7 @@ class CreateDB(object):
         server = couchdb.Server()
         db = server['boards']
         all_boards = []
+        boards = {}
         for db_object in db:
             doc = db[db_object]
             #creating dictionary object
@@ -36,7 +39,8 @@ class CreateDB(object):
             board['board_name'] = str(doc['board_name'])
             all_boards.append(board)
         #return list of dictionaries
-        return json.dumps(all_boards)
+        boards['boards'] = all_boards
+        return json.dumps(boards)
 
     def getOneBoard (self,board_id):
         """
@@ -47,7 +51,7 @@ class CreateDB(object):
         all_pins = []
         for db_object in db:
             doc = db[db_object]
-            if doc['board_id'] == board_id:
+            if doc['boardid'] == board_id:
                 pin = {}
                 pin['pin_id'] = doc['pinid']
                 pin['pin_name'] = str(doc['pinname'])
@@ -64,6 +68,7 @@ class CreateDB(object):
         pin_url=""
         server=couchdb.Server()
         db=server['pins']
+        pin_url =''
         for db_object in db:
             doc=db[db_object]
             if doc['pinid']==pin_id:
@@ -114,7 +119,7 @@ class CreateDB(object):
         doc_id, doc_rev = db.save({'id': str(user.id), 'name': user.name, 'username': user.username, 'password': user.password})
         doc = db[doc_id]
         userData = {}
-        userData['id'] = doc['id']
+        userData['user_id'] = doc['id']
         userData['name'] = str(doc['name'])
         userData['username'] = str(doc['username'])
         return json.dumps(userData)
@@ -125,30 +130,27 @@ class CreateDB(object):
         """
         print user._username
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
-        print "I am here"
         db = server['users']
-        print "im here 2"
         for dbObj in db:
             doc = db[dbObj]
             print doc
             if doc['username'] == user._username:
-                print "im here 3"
                 print "*******Existing*******"
                 if doc['password'] == user._password:
                      userData = {}
-                     userData['id'] = doc['id']
+                     userData['user_id'] = doc['id']
                      userData['name'] = str(doc['name'])
                      userData['username'] = str(doc['username'])
                      return json.dumps(userData)
         userData = {}
-        userData['id'] = "Null"
+        userData['user_id'] = "Null"
         userData['username'] = "Wrong Username"
         userData['password'] = "Wrong Password"
         return json.dumps(userData)
 
     def retrieveUserBoards(self, user_id):
         """
-        7. Get User Boards
+        7. Get User Boards #TODO here only one board is returned
         """
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
         db = server['boards']
@@ -157,6 +159,7 @@ class CreateDB(object):
             uid = doc['userId']
             print "********", doc['userId']
             user = {}
+            boards = {}
             all_boards = []
             if str(user_id) == str(uid):
                 #user is found in db
@@ -165,7 +168,8 @@ class CreateDB(object):
                 board['board_id'] = doc['board_id']
                 board['board_name'] = str(doc['board_name'])
                 all_boards.append(board)
-                return json.dumps(all_boards)
+                boards['boards'] = all_boards
+                return json.dumps(boards)
         print "******Failure******"
         board = "No boards are created!!"
         return json.dumps(board)
@@ -211,7 +215,7 @@ class CreateDB(object):
                 doc['boardid'] = boards
                 print type(doc)
                 db.save(doc)
-        return "done"
+        return self.getOneBoard(boardid)
 
     def deleteBoard(self,boardid):
         """
@@ -233,7 +237,25 @@ class CreateDB(object):
         """
         12. Add Comment
         """
+        print "inside add comment"
         server = couchdb.Server()
         db = server['comments']
         comment_id = db.save({'comment': comments.comment, 'usercomid':comments.usercomid, 'pinid':comments.pincommentid})
-        #response is status code only
+        return "Don"
+
+    def isvaliduser(self,userid):
+        """
+        To check if the user id is valid
+        """
+        server = couchdb.Server()
+        db = server['users']
+        self.flag = False
+        for dbObj in db:
+             doc = db[dbObj]
+             if str(userid) == str(doc['id']):
+                self.flag = True
+                break
+        return self.flag
+
+
+

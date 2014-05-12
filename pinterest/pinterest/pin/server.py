@@ -5,12 +5,10 @@ Using bottle (python) RESTful web service.
 """
 
 import time
-import sys
 import socket
 import os
 import User
 import random
-import couchdb
 import json
 import boto
 from boto.s3.key import Key
@@ -80,49 +78,57 @@ def signin():
 
 @route('/v1/user/:user_id', method='GET')
 def getuserboards(user_id):
-    user_boards = db.retrieveUserBoards(user_id)
-    response.set_header("content-type","application/json")
-    response.body = user_boards
-    print "***Response returned is:\n"
-    print response.status
-    print response.body
-    print "\n***"
-    return response
-
-@route('/v1/user/:user_id/board', method='POST')
-def createBoard(user_id):
-    print "Creating board for user -> " + user_id
-    id = random.randint(1, 100)
-    board._board_id = id
-    print str(board._board_id) + "\n"
-    board._board_name = request.json['boardName'] # request.forms.get('boardName')
-    print "BoardName: " + board._board_name
-    board._userId = user_id
-    new_board = db.insertBoard(board)
-    response.set_header("content-type","application/json")
-    response.body = new_board
-    print "***Response returned is:\n"
-    print response.status
-    print response.body
-    print "\n***"
-    return response
-
-@route('/v1/user/:user_id/board/:board_id', method='DELETE')
-def deleteBoard(user_id,board_id):
-    try :
-        print "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id)
-        boardid= board_id
-        #curl -i -H "Accept: application/json" -H "X-HTTP-Method-Override: DELETE" -X DELETE http://localhost:8080/v1/user/14/board/96
-        del_board = db.deleteBoard(boardid)
+    if(db.isvaliduser(user_id)):
+        user_boards = db.retrieveUserBoards(user_id)
         response.set_header("content-type","application/json")
-        response.body = del_board
-        print "***Response returned is----->deleteBoard:\n"
+        response.body = user_boards
+        print "***Response returned is:\n"
         print response.status
         print response.body
         print "\n***"
         return response
+    else:
+        return erroruser()
+
+@route('/v1/user/:user_id/board', method='POST')
+def createBoard(user_id):
+    if(db.isvaliduser(user_id)):
+        print "Creating board for user -> " + user_id
+        id = random.randint(1, 100)
+        board._board_id = id
+        print str(board._board_id) + "\n"
+        board._board_name = request.json['boardName'] # request.forms.get('boardName')
+        print "BoardName: " + board._board_name
+        board._userId = user_id
+        new_board = db.insertBoard(board)
+        response.set_header("content-type","application/json")
+        response.body = new_board
+        print "***Response returned is:\n"
+        print response.status
+        print response.body
+        print "\n***"
+        return response
+    else:
+        return erroruser()
+
+def deleteBoard(user_id,board_id):
+    try :
+        if(db.isvaliduser(user_id)):
+            print "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id)
+            boardid= board_id
+            #curl -i -H "Accept: application/json" -H "X-HTTP-Method-Override: DELETE" -X DELETE http://localhost:8080/v1/user/14/board/96
+            del_board = db.deleteBoard(boardid)
+            response.set_header("content-type","application/json")
+            response.body = del_board
+            print "***Response returned is----->deleteBoard:\n"
+            print response.status
+            print response.body
+            print "\n***"
+            return response
+        else:
+            return erroruser()
     except:
-        raise
+        return erroruser()
     #return "Deleting board boardId: " +  str(board_id) +" for user -> " + str(user_id) + "\n"
 
 @route('/v1/boards',method='GET')
@@ -153,41 +159,46 @@ def getOneBoard(board_id):
 #TODO create response
 @route('/v1/user/:user_id/pin/upload', method='POST')
 def addimage(user_id):
+    if(db.isvaliduser(user_id)):
+        upload = request.files.get('content')
+        name, ext = os.path.splitext(upload.filename)
 
-    upload = request.files.get('content')
-    name, ext = os.path.splitext(upload.filename)
-    if ext not in ('.png','.jpg','.jpeg'):
-        return 'File extension not allowed.'
-    #TODO change this line for windows.
-    #here check if the directory is existing
-    save_path = 'C:\\tmp'
-    upload.save(save_path)
-    addedPinPath = save_path + '/' + name +'.jpg'
+        if ext not in ('.png','.jpg','.jpeg'):
+            return 'File extension not allowed.'
 
-    print addedPinPath
+        #here check if the directory is existing
+        save_path = 'C:\\tmp'
+        upload.save(save_path)
+        addedPinPath = save_path + '/' + name +'.jpg'
 
-    boto.set_stream_logger('boto')
-    #TODO removed s3 line
-    s3 = S3Connection('', '')
-    #s3 = boto.connect_s3()
-    print 'Connected to S3'
-    bucket = s3.get_bucket('bucket275')
-    #create key
-    k=Key(bucket)
-    k.key='3' # TODO set auto generated pin id here
-    k.set_contents_from_filename(addedPinPath)
-    time.sleep(2)
+        boto.set_stream_logger('boto')
+        #TODO removed s3 line
+        s3 = S3Connection('', '')
+        #s3 = boto.connect_s3()
+        print 'Connected to S3'
+        bucket = s3.get_bucket('bucket275')
+        #create key
+        k=Key(bucket)
+        k.key='3' # TODO set auto generated pin id here
+        k.set_contents_from_filename(addedPinPath)
+        time.sleep(2)
 
-    pin._pinid = '3' #TODO generate the pin id
-    pin._pinname = name
-    #pin._pinurl = addedPinPath
-    pin._pinurl='https://bucket275.s3.amazonaws.com/'+pin._pinid
-    pin._boardid = ''
+        pin._pinid = '3' #TODO generate the pin id
+        pin._pinname = name
+        pin._pinurl='https://bucket275.s3.amazonaws.com/'+pin._pinid
+        pin._boardid = ''
 
-    db.insertPin(pin)
-    os.remove(addedPinPath)
-
-    return 'success'
+        pindetails = db.insertPin(pin)
+        os.remove(addedPinPath)
+        response.set_header("content-type","application/json")
+        response.body = pindetails
+        print "***Response returned is:\n"
+        print response.status
+        print response.body
+        print "\n***"
+        return response
+    else:
+        return erroruser()
 
 @route('/v1/pins', method='GET')
 def getAllPins():
@@ -218,24 +229,44 @@ def getPin(pin_id):
 #TODO what is response for this? not mentioned in standards doc
 @route('/v1/user/:userid/board/:boardid',method='PUT')
 def attachPin(userid,boardid):
-
-    pin_id = request.json['pin_id']
-    print "the pin id is " + pin_id
-    return db.updatePin(pin_id,userid,boardid)
+    if(db.isvaliduser(userid)):
+        pin_id = request.json['pin_id']
+        print "the pin id is " + pin_id
+        res = db.updatePin(pin_id,userid,boardid)
+        response.set_header("content-type","application/json")
+        response.body = res
+        print "***Response returned is:\n"
+        print response.status
+        print response.body
+        print "\n***"
+        return response
+    else:
+        return erroruser()
 
 
 @route('/v1/user/:userid/pin/:pinid',method='POST')
 def addComment(userid,pinid):
-    comment._comment = request.json['comment']
-    comment._usercomid = userid
-    comment._pincommentid = pinid
-    new_comm = db.insertComments(comment)
+    if(db.isvaliduser(userid)):
+        print "inside add comment"
+        comment._comment = request.json['comment']
+        comment._usercomid = userid
+        comment._pincommentid = pinid
+        new_comm = db.insertComments(comment)
+        response.set_header("content-type","application/json")
+        response.body = new_comm
+        print "***Response returned is:\n"
+        print response.status
+        print response.body
+        print "\n***"
+        return response
+    else:
+        return erroruser()
+
+def erroruser():
     response.set_header("content-type","application/json")
-    response.body = new_comm
-    print "***Response returned is:\n"
-    print response.status
-    print response.body
-    print "\n***"
+    err = {}
+    err['Error'] = "User Doesn't Exists"
+    response.body = json.dumps(err)
     return response
 
 @error(200)
@@ -256,7 +287,7 @@ def error400(error1):
 
 @error(401)
 def error401(error1):
-    return 'Unauthorized'
+    return 'Unauthorized Request, Wrong User id'
 
 @error(404)
 def error404(error1):

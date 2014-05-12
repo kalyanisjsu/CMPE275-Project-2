@@ -1,12 +1,8 @@
 import os
 import socket
-import zipfile
 import httplib
-import base64
 import urlparse
-import tempfile
 import sys
-import urllib2
 import mimetypes
 import json
 from distutils import log
@@ -30,62 +26,61 @@ def get_content_type(filename):
 class ClientPy:
 
     def __init__(self):
-        self.host = raw_input("Enter IP : ")
-        #if len(sys.argv) > 1:
-        #self.host = sys.argv[1]
-        self.url = ''
-        self.flg = False
-        self.userid = 0
-        cmd = self.printusage()
-        while(cmd <> '0'):
-            if cmd == '1':
-                self.signUp()
-                cmd = self.printusage()
-            elif cmd == '2':
-                self.signIn()
-                cmd = self.printusage()
-            elif cmd == '3':
-                self.getAllBoards()
-                cmd = self.printusage()
-            elif cmd == '4':
-                self.getAllPins()
-                cmd = self.printusage()
-            elif cmd == '5':
-                self.getBoard()
-                cmd = self.printusage()
-            elif cmd == '6':
-                self.getPin()
-                cmd = self.printusage()
-            elif cmd > 6 :
-                if(self.flg):
-                    if cmd == '7':
-                        self.getUserBoard()
+        if len(sys.argv) > 1:
+            self.host = sys.argv[1]
+            self.url = ''
+            self.flg = False
+            self.userid = 0
+            cmd = self.printusage()
+            while(cmd <> '0'):
+                    if cmd == '1':
+                        self.signUp()
                         cmd = self.printusage()
-                    elif cmd == '8':
-                        savepath = raw_input('\nEnter the path of the file to be copied :')
-                        self.upload_file(savepath)
+                    elif cmd == '2':
+                        self.signIn()
                         cmd = self.printusage()
-                    elif cmd == '9':
-                        self.createBoard()
+                    elif cmd == '3':
+                        self.getAllBoards()
                         cmd = self.printusage()
-                    elif cmd == '10':
-                        self.attachPin()
+                    elif cmd == '4':
+                        self.getAllPins()
                         cmd = self.printusage()
-                    elif cmd == '11':
-                        self.addComment()
+                    elif cmd == '5':
+                        self.getBoard()
                         cmd = self.printusage()
-                    elif cmd == '12':
-                        self.deleteBoard()
+                    elif cmd == '6':
+                        self.getPin()
                         cmd = self.printusage()
-                    elif cmd > '12':
-                        print "Please enter correct option!!!!"
-                        cmd = self.printusage()
-                    else:
-                        print "Please enter correct option and login for more functions"
-                        cmd = self.printusage()
-                self.quitConnection()
-        #else:
-            #print "usage:", sys.argv[0],"[host ip] example 'x.x.x.x.'"
+                    elif cmd > 6 :
+                        if(self.flg):
+                            if cmd == '7':
+                                self.getUserBoard()
+                                cmd = self.printusage()
+                            elif cmd == '8':
+                                savepath = raw_input('\nEnter the path of the file to be copied :')
+                                self.upload_file(savepath)
+                                cmd = self.printusage()
+                            elif cmd == '9':
+                                self.createBoard()
+                                cmd = self.printusage()
+                            elif cmd == '10':
+                                self.attachPin()
+                                cmd = self.printusage()
+                            elif cmd == '11':
+                                self.addComment()
+                                cmd = self.printusage()
+                            elif cmd == '12':
+                                self.deleteBoard()
+                                cmd = self.printusage()
+                            elif cmd > '12':
+                                print "Please enter correct option!!!!"
+                                cmd = self.printusage()
+                        else:
+                            print "Please enter correct option and login for more functions"
+                            cmd = self.printusage()
+            self.quitConnection()
+        else:
+            print "usage:", sys.argv[0],"[host ip] example 'x.x.x.x.'"
 
     def printusage(self):
         if(self.flg):
@@ -116,12 +111,11 @@ class ClientPy:
         return cmd
 
     def signUp(self):
-        self.flg = True
         name = raw_input("Enter Name : ")
         username = raw_input("Enter Username : ")
         password = raw_input("Enter Password : ")
         url = 'http://localhost:8080/v1/reg'
-        #body = []
+
         body = "name="+name+"&username="+ username + "&password="+ password
         schema, netloc, url, params, query, fragments = \
             urlparse.urlparse(url)
@@ -139,18 +133,25 @@ class ClientPy:
             return
 
         response = self.conn.getresponse()
-        print "***Response received:\n"
-        print ('-----')
-        print response.msg
-        self.userid = 25 # Get userid from the response and set it here.
-        print ('-----')
-        print response.read()
-        print "\n***"
+        print "\n***Response received:\n"
+        body = response.read()
+        jsonobj = json.loads(str(body))
+        print "\nResponse Received:"
+        print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
+        print "   Response Content:"
+        if(response.status == 200):
+            self.flg = True
+            print "user id is %s" % jsonobj['user_id']
+            self.userid = jsonobj['user_id']
+        for key in jsonobj:
+           print "%15s \t=   %s" % (key, jsonobj[key])
+        print ('\n   JSON Received:')
+        print '%60s' % body
+        print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
         self.conn.close()
 
 
     def signIn(self):
-        self.flg = True
         username = raw_input("Enter Username : ")
         password = raw_input("Enter Password : ")
         url = 'http://localhost:8080/v1/login'
@@ -171,16 +172,20 @@ class ClientPy:
             return
 
         response = self.conn.getresponse()
-        print "***Response received:\n"
-        print ('-----')
         body = response.read()
-        print body
-        print response.msg
-        d = json.loads(str(body))
-        self.userid = str(d['id']) # Get userid from the response and set it here.
-        print ('-----')
-        print response.read()
-        print "\n***"
+        jsonobj = json.loads(str(body))
+        print "\nResponse Received:"
+        print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
+        print "   Response Content:"
+        if(response.status == 200):
+            self.flg = True
+            print "user id is %s" % jsonobj['user_id']
+            self.userid = jsonobj['user_id']
+        for key in jsonobj:
+           print "%15s \t=   %s" % (key, jsonobj[key])
+        print ('\n   JSON Received:')
+        print '%60s' % body
+        print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
         self.conn.close()
 
     def getAllBoards(self):
@@ -196,12 +201,17 @@ class ClientPy:
             print(str(e), log.ERROR)
             return
         response = self.conn.getresponse()
-        print "***Response received:\n"
-        print ('-----')
-        print response.msg
-        print ('-----')
-        print response.read()
-        print "\n***"
+        body = response.read()
+        jsonobj = json.loads(str(body))
+        print "\nResponse Received:"
+        print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
+        print "   Response Content:"
+        print "%15s" % "Boards"
+        for k in jsonobj['boards']:
+           print "%20s = %s %15s = %s" % ("board_id",k['board_id'],"boardname",k['board_name'])
+        print ('\n   JSON Received:')
+        print '         %s' % (body)
+        print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
         self.conn.close()
 
 
@@ -218,12 +228,18 @@ class ClientPy:
             print(str(e), log.ERROR)
             return
         response = self.conn.getresponse()
-        print "***Response received:\n"
-        print ('-----')
-        print response.msg
-        print ('-----')
-        print response.read()
-        print "\n***"
+        print "\n***Response received:"
+        body = response.read()
+        jsonobj = json.loads(str(body))
+        print "\nResponse Received:"
+        print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
+        print "   Response Content:"
+        print "%15s" % "Pins"
+        for k in jsonobj['pins']:
+           print "%20s = %s %15s = %s %15s = %s" % ("pin_id",k['pin_id'],"pin_name",k['pin_name'],"pin_url", k['pin_url'])
+        print ('\n   JSON Received:')
+        print '         %s' % (body)
+        print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
         self.conn.close()
 
     def getBoard(self):
@@ -240,12 +256,16 @@ class ClientPy:
             print(str(e), log.ERROR)
             return
         response = self.conn.getresponse()
-        print "***Response received:\n"
-        print ('-----')
-        print response.msg
-        print ('-----')
-        print response.read()
-        print "\n***"
+        print "\nResponse Received:"
+        print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
+        body = response.read()
+        jsonobj = json.loads(str(body))
+        print "   Response Content:"
+        for key in jsonobj:
+           print "%15s \t=   %s" % (key, jsonobj[key])
+        print ('\n   JSON Received:')
+        print '%60s' % body
+        print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
         self.conn.close()
 
     def getPin(self):
@@ -262,12 +282,19 @@ class ClientPy:
             print(str(e), log.ERROR)
             return
         response = self.conn.getresponse()
-        print "***Response received:\n"
-        print ('-----')
-        print response.msg
-        print ('-----')
-        print response.read()
-        print "\n***"
+        print "\nResponse Received:"
+        print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
+        body = response.read()
+        if(body.__len__() > 0):
+            #TODO finish this part correctly
+            #jsonobj = json.loads(str(body))
+            #print "   Response Content:"
+            #print "%15s" % "Pins"
+            #for key in jsonobj:
+            #   print "%15s \t=   %s" % (key, jsonobj[key])
+            print ('\n   JSON Received:')
+            print '         %s' % (body)
+        print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
         self.conn.close()
 
     def quitConnection(self):
@@ -287,12 +314,16 @@ class ClientPy:
             print(str(e), log.ERROR)
             return
         response = self.conn.getresponse()
-        print "***Response received:\n"
-        print ('-----')
-        print response.msg
-        print ('-----')
-        print response.read()
-        print "\n***"
+        body = response.read()
+        jsonobj = json.loads(str(body))
+        print "\nResponse Received:"
+        print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
+        print "   Response Content:"
+        for key in jsonobj:
+           print "%15s \t=   %s" % (key, jsonobj[key])
+        print ('\n   JSON Received:')
+        print '         %s' % (body)
+        print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
         self.conn.close()
 
     def createBoard(self):
@@ -314,12 +345,16 @@ class ClientPy:
             print(str(e), log.ERROR)
             return
         response = self.conn.getresponse()
-        print "***Response received:\n"
-        print ('-----')
-        print response.msg
-        print ('-----')
-        print response.read()
-        print "\n***"
+        body = response.read()
+        jsonobj = json.loads(str(body))
+        print "\nResponse Received:"
+        print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
+        print "   Response Content:"
+        for key in jsonobj:
+           print "%15s \t=   %s" % (key, jsonobj[key])
+        print ('\n   JSON Received:')
+        print '         %s' % (body)
+        print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
         self.conn.close()
 
 
@@ -340,19 +375,23 @@ class ClientPy:
             urlparse.urlparse(route_url)
         self.conn = httplib.HTTPConnection(netloc)
         try:
-            self.conn.request('PUT','/v1/user/'+self.userid +'/board/'+ board_id,body =data_json, headers = head)
+            self.conn.request('PUT','/v1/user/'+str(self.userid) +'/board/'+ str(board_id),body =data_json, headers = head)
 
         except socket.error, e:
             print(str(e), log.ERROR)
             return
 
         response = self.conn.getresponse()
-        print "***Response received:\n"
-        print ('-----')
-        print response.msg
-        print ('-----')
-        print response.read()
-        print "\n***"
+        body = response.read()
+        jsonobj = json.loads(str(body))
+        print "\nResponse Received:"
+        print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
+        print "   Response Content:"
+        for key in jsonobj:
+           print "%15s \t=   %s" % (key, jsonobj[key])
+        print ('\n   JSON Received:')
+        print '         %s' % (body)
+        print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
         self.conn.close()
 
 
@@ -368,19 +407,18 @@ class ClientPy:
             urlparse.urlparse(route_url)
         self.conn = httplib.HTTPConnection(netloc)
         try:
-            self.conn.request('POST','/v1/user/'+self.userid +'/pin/'+ pin_id,body =data_json,headers=head)
+            self.conn.request('POST','/v1/user/'+str(self.userid) +'/pin/'+ str(pin_id),body =data_json,headers=head)
 
         except socket.error, e:
             print(str(e), log.ERROR)
             return
 
         response = self.conn.getresponse()
-        print "***Response received:\n"
-        print ('-----')
-        print response.msg
-        print ('-----')
-        print response.read()
-        print "\n***"
+        body = response.read()
+        print "\nResponse Received:"
+        print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
+        print ('    Message Received: %s') % body
+        print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
         self.conn.close()
 
     def deleteBoard(self):
@@ -392,24 +430,28 @@ class ClientPy:
             urlparse.urlparse(route_url)
         self.conn = httplib.HTTPConnection(netloc)
         try:
-            self.conn.request('DELETE','/v1/user/'+self.userid +'/board/'+board_id ,headers=head)
+            self.conn.request('DELETE','/v1/user/'+str(self.userid) +'/board/'+str(board_id) ,headers=head)
 
         except socket.error, e:
             print(str(e), log.ERROR)
             return
 
         response = self.conn.getresponse()
-        print "***Response received:\n"
-        print ('-----')
-        print response.msg
-        print ('-----')
-        print response.read()
-        print "\n***"
+        body = response.read()
+        jsonobj = json.loads(str(body))
+        print "\nResponse Received:"
+        print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
+        print "   Response Content:"
+        for key in jsonobj:
+           print "%15s \t=   %s" % (key, jsonobj[key])
+        print ('\n   JSON Received:')
+        print '         %s' % (body)
+        print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
         self.conn.close()
 
     def upload_file(self,savepath):
         print '--> i m here 2'
-        url = 'http://localhost:8080/v1/user/45/pin/upload'
+        url = 'http://localhost:8080/v1/user/'+str(self.userid) +'/pin/upload'
         filename = savepath
         #files = {'file': open('image.jpg', 'rb')}
         content = open(filename, 'rb').read()
