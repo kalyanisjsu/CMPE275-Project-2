@@ -1,6 +1,7 @@
 import couchdb
 import json
 import random
+from bottle import HTTPError
 
 class CreateDB(object):
 
@@ -42,7 +43,7 @@ class CreateDB(object):
         boards['boards'] = all_boards
         return json.dumps(boards)
 
-    def getOneBoard (self,board_id):
+    def getOneBoard(self,board_id):
         """
         3. Get one board
         """
@@ -142,11 +143,13 @@ class CreateDB(object):
                      userData['name'] = str(doc['name'])
                      userData['username'] = str(doc['username'])
                      return json.dumps(userData)
-        userData = {}
-        userData['user_id'] = "Null"
-        userData['username'] = "Wrong Username"
-        userData['password'] = "Wrong Password"
-        return json.dumps(userData)
+        #userData = {}
+        #userData['user_id'] = "Null"
+        #userData['username'] = "Wrong Username"
+        #userData['password'] = "Wrong Password"
+        #return json.dumps(userData)
+        return ""
+
 
     def retrieveUserBoards(self, user_id):
         """
@@ -154,13 +157,12 @@ class CreateDB(object):
         """
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
         db = server['boards']
+        boards = {}
+        all_boards = []
         for dbObj in db:
             doc = db[dbObj]
             uid = doc['userId']
             print "********", doc['userId']
-            user = {}
-            boards = {}
-            all_boards = []
             if str(user_id) == str(uid):
                 #user is found in db
                 print "****Success*******"
@@ -169,7 +171,7 @@ class CreateDB(object):
                 board['board_name'] = str(doc['board_name'])
                 all_boards.append(board)
                 boards['boards'] = all_boards
-                return json.dumps(boards)
+        return json.dumps(boards)
         print "******Failure******"
         board = "No boards are created!!"
         return json.dumps(board)

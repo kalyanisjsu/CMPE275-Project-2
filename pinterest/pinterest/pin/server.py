@@ -15,7 +15,7 @@ from boto.s3.key import Key
 from boto.s3.connection import S3Connection
 
 # bottle framework
-from bottle import request, response, route, run, template, get, post, error
+from bottle import request, response, route, run, template, get, post, error,HTTPError
 from couchdatabase import CreateDB
 
 import Board
@@ -68,6 +68,8 @@ def signin():
     user._username = request.forms.get('username')
     user._password = request.forms.get('password')
     userResponse = db.retrieveUser(user)
+    if(userResponse.__len__() < 1):
+        return HTTPError(401)
     response.set_header("content-type", "application/json")
     response.body = userResponse
     print "***Response returned is:\n"
@@ -75,6 +77,7 @@ def signin():
     print response.body
     print "\n***"
     return response
+
 
 @route('/v1/user/:user_id', method='GET')
 def getuserboards(user_id):
@@ -111,6 +114,7 @@ def createBoard(user_id):
     else:
         return erroruser()
 
+@route('/v1/user/:user_id/board/:board_id', method='DELETE')
 def deleteBoard(user_id,board_id):
     try :
         if(db.isvaliduser(user_id)):

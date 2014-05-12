@@ -173,16 +173,15 @@ class ClientPy:
 
         response = self.conn.getresponse()
         body = response.read()
-        jsonobj = json.loads(str(body))
         print "\nResponse Received:"
         print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
-        print "   Response Content:"
         if(response.status == 200):
             self.flg = True
-            print "user id is %s" % jsonobj['user_id']
+            jsonobj = json.loads(str(body))
             self.userid = jsonobj['user_id']
-        for key in jsonobj:
-           print "%15s \t=   %s" % (key, jsonobj[key])
+            print "   Response Content:"
+            for key in jsonobj:
+                print "%15s \t=   %s" % (key, jsonobj[key])
         print ('\n   JSON Received:')
         print '%60s' % body
         print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
@@ -319,8 +318,9 @@ class ClientPy:
         print "\nResponse Received:"
         print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
         print "   Response Content:"
-        for key in jsonobj:
-           print "%15s \t=   %s" % (key, jsonobj[key])
+        print "%15s" % "Boards"
+        for k in jsonobj['boards']:
+           print "%20s = %s %15s = %s" % ("board_id",k['board_id'],"boardname",k['board_name'])
         print ('\n   JSON Received:')
         print '         %s' % (body)
         print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
@@ -441,9 +441,6 @@ class ClientPy:
         jsonobj = json.loads(str(body))
         print "\nResponse Received:"
         print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
-        print "   Response Content:"
-        for key in jsonobj:
-           print "%15s \t=   %s" % (key, jsonobj[key])
         print ('\n   JSON Received:')
         print '         %s' % (body)
         print '\n'+ '-'*70 + '***************'+ '-'*70 + '\n'
