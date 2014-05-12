@@ -27,13 +27,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="client.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="client.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pinterest/client/client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="94" column="12" selection-start="3269" selection-end="3269" vertical-scroll-proportion="-0.7488987" vertical-offset="1938" max-vertical-offset="8024">
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
+            <state line="94" column="12" selection-start="2911" selection-end="2911" vertical-scroll-proportion="0.0" vertical-offset="1598" max-vertical-offset="8381">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="couchdatabase.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pinterest/pin/couchdatabase.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="91" column="44" selection-start="2666" selection-end="2666" vertical-scroll-proportion="0.5295405" vertical-offset="1271" max-vertical-offset="4131">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -61,8 +68,8 @@
         <option value="$PROJECT_DIR$/moo-ws/test/login.sh" />
         <option value="$PROJECT_DIR$/moo-ws/moo/couchdatabase.py" />
         <option value="$PROJECT_DIR$/pinterest/pin/server.py" />
-        <option value="$PROJECT_DIR$/pinterest/pin/couchdatabase.py" />
         <option value="$PROJECT_DIR$/pinterest/client/client.py" />
+        <option value="$PROJECT_DIR$/pinterest/pin/couchdatabase.py" />
       </list>
     </option>
   </component>
@@ -117,7 +124,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -178,14 +184,19 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/PROJECT275/moo-ws" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="FullScreen" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
+    <property name="options.lastSelected" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -269,17 +280,6 @@
       <option name="OPTIONS" value="" />
       <method />
     </configuration>
-    <configuration default="true" type="BashConfigurationType" factoryName="Bash">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="INTERPRETER_PATH" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs />
-      <module name="moo-ws" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <method />
-    </configuration>
     <configuration default="true" type="tests" factoryName="py.test">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -344,6 +344,9 @@
       <option name="PARAMETERS" value="" />
       <method />
     </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
+      <method />
+    </configuration>
     <configuration default="true" type="tests" factoryName="Unittests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -365,9 +368,6 @@
       <option name="PUREUNITTEST" value="true" />
       <option name="PARAMS" value="" />
       <option name="USE_PARAM" value="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Doctests">
@@ -410,16 +410,14 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
-    <list size="3">
-      <item index="0" class="java.lang.String" itemvalue="Bash.run.sh" />
-      <item index="1" class="java.lang.String" itemvalue="Python.couchdb" />
-      <item index="2" class="java.lang.String" itemvalue="Python.run" />
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="Python.couchdb" />
+      <item index="1" class="java.lang.String" itemvalue="Python.run" />
     </list>
     <recent_temporary>
-      <list size="3">
+      <list size="2">
         <item index="0" class="java.lang.String" itemvalue="Python.run" />
-        <item index="1" class="java.lang.String" itemvalue="Bash.run.sh" />
-        <item index="2" class="java.lang.String" itemvalue="Python.couchdb" />
+        <item index="1" class="java.lang.String" itemvalue="Python.couchdb" />
       </list>
     </recent_temporary>
   </component>
@@ -450,7 +448,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -461,7 +459,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19692533" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24409449" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24294671" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32755905" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -493,51 +491,44 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/pinterest/pin/Board.py">
+    <entry file="file://$PROJECT_DIR$/pinterest/client/client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1088">
+        <state line="94" column="12" selection-start="2911" selection-end="2911" vertical-scroll-proportion="0.0" vertical-offset="1598" max-vertical-offset="8381">
           <folding />
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pinterest/pin/Board.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1088" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pinterest/pin/comments.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1105">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1105" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pinterest/pin/User.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1139">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1139" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pinterest/pin/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="234" column="0" selection-start="6662" selection-end="6662" vertical-scroll-proportion="-0.45154184" vertical-offset="4183" max-vertical-offset="5423">
-          <folding>
-            <element signature="e#54#65#0" expanded="false" />
-          </folding>
+        <state line="234" column="0" selection-start="6662" selection-end="6662" vertical-scroll-proportion="-0.45154184" vertical-offset="4183" max-vertical-offset="5423" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pinterest/client/client.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="94" column="12" selection-start="2911" selection-end="2911" vertical-scroll-proportion="0.0" vertical-offset="1598" max-vertical-offset="8381">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pinterest/pin/couchdatabase.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="217" column="0" selection-start="7334" selection-end="7334" vertical-scroll-proportion="2.2356827" vertical-offset="2674" max-vertical-offset="3791">
-          <folding>
-            <element signature="e#0#14#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pinterest/client/client.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="94" column="12" selection-start="3269" selection-end="3269" vertical-scroll-proportion="-0.7488987" vertical-offset="1938" max-vertical-offset="8024">
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
+        <state line="91" column="44" selection-start="2666" selection-end="2666" vertical-scroll-proportion="0.5295405" vertical-offset="1271" max-vertical-offset="4131">
+          <folding />
         </state>
       </provider>
     </entry>

@@ -56,28 +56,43 @@ class CreateDB(object):
         return json.dumps(all_pins)
 
 
-    #todo create response object
     def getOnePin(self,pin_id):
         """
         4. Get one pin
         """
+        print 'in get one pin'
+        pin_url=""
         server=couchdb.Server()
         db=server['pins']
         for db_object in db:
             doc=db[db_object]
             if doc['pinid']==pin_id:
                 pin_url = str(doc['pinurl'])
-            if not pin_url:
-                response = ""
-            else:
-                response = "Pin URL: "+pin_url+" ,"+"\n"+" Comments = ["
-                db=server['comments']
-                for db_object in db:
-                    doc=db[db_object]
-                    if doc['pinid']==pin_id:
-                        response +="User: "+doc['usercomid']+", Comment: "+doc['comment'] +"\n"
-                response += "]\n"
-        return response
+                print 'found match'
+                break
+        if pin_url=="":
+            #No Pin found
+            print 'No pin found'
+            return json.dumps("No pin found")
+        else:
+            print 'Pin found '+pin_url
+            result=[]
+            pin={}
+            pin['pin_url']=pin_url
+            result.append(pin)
+            all_comments=[]
+            db=server['comments']
+            for db_object in db:
+                doc=db[db_object]
+                if doc['pincommentid']==pin_id:
+                    comment={}
+                    comment['usercomid']=doc['usercomid']
+                    print comment['usercomid']
+                    comment['comment']=doc['comment']
+                    print comment['comment']
+                    all_comments.append(comment)
+            result.append(all_comments)
+        return json.dumps(result)
 
     def insertUser(self, user):
         """
