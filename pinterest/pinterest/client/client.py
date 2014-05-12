@@ -6,6 +6,7 @@ import sys
 import mimetypes
 import json
 from distutils import log
+import webbrowser
 
 
 try:
@@ -114,7 +115,7 @@ class ClientPy:
         name = raw_input("Enter Name : ")
         username = raw_input("Enter Username : ")
         password = raw_input("Enter Password : ")
-        url = 'http://localhost:8080/v1/reg'
+        url = 'http://'+self.host+':8080/v1/reg'
 
         body = "name="+name+"&username="+ username + "&password="+ password
         schema, netloc, url, params, query, fragments = \
@@ -154,7 +155,7 @@ class ClientPy:
     def signIn(self):
         username = raw_input("Enter Username : ")
         password = raw_input("Enter Password : ")
-        url = 'http://localhost:8080/v1/login'
+        url = 'http://'+self.host+':8080/v1/login'
         body = "username="+username + "&password="+ password
         schema, netloc, url, params, query, fragments = \
             urlparse.urlparse(url)
@@ -281,6 +282,7 @@ class ClientPy:
             print(str(e), log.ERROR)
             return
         response = self.conn.getresponse()
+        webbrowser.open("http://www.google.com")
         print "\nResponse Received:"
         print "%s %s %s \n%s"%("Status:",response.status, response.reason, response.msg)
         body = response.read()
@@ -447,8 +449,8 @@ class ClientPy:
         self.conn.close()
 
     def upload_file(self,savepath):
-        print '--> i m here 2'
-        url = 'http://localhost:8080/v1/user/'+str(self.userid) +'/pin/upload'
+       
+        url = 'http://'+self.host+':8080/v1/user/'+str(self.userid) +'/pin/upload'
         filename = savepath
         #files = {'file': open('image.jpg', 'rb')}
         content = open(filename, 'rb').read()

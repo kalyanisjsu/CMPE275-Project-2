@@ -82,23 +82,24 @@ class CreateDB(object):
             return json.dumps("No pin found")
         else:
             print 'Pin found '+pin_url
-            result=[]
             pin={}
             pin['pin_url']=pin_url
-            result.append(pin)
+            pin['pin_name'] = doc['pinname']
             all_comments=[]
             db=server['comments']
             for db_object in db:
                 doc=db[db_object]
-                if doc['pincommentid']==pin_id:
+                if doc['pinid']==pin_id:
                     comment={}
                     comment['usercomid']=doc['usercomid']
                     print comment['usercomid']
                     comment['comment']=doc['comment']
                     print comment['comment']
                     all_comments.append(comment)
-            result.append(all_comments)
-        return json.dumps(result)
+            #result.append(all_comments)
+
+        pin['comments'] = all_comments
+        return json.dumps(pin)
 
     def insertUser(self, user):
         """
@@ -138,6 +139,7 @@ class CreateDB(object):
             if doc['username'] == user._username:
                 print "*******Existing*******"
                 if doc['password'] == user._password:
+                     print "*******Existing*******"
                      userData = {}
                      userData['user_id'] = doc['id']
                      userData['name'] = str(doc['name'])
@@ -182,6 +184,11 @@ class CreateDB(object):
         """
         server = couchdb.Server()
         db = server['pins']
+        max_id = 0
+        for dbObj in db:
+            doc = db[dbObj]
+            max_id = doc['pinid']
+        pin._pinid = int(max_id) + 1
         pin_id = db.save({'pinid': pin.pinid,'pinname': pin.pinname, 'pinurl': pin.pinurl, 'boardid':pin.boardid})
         pin_dict = {}
         pin_dict['pin_id'] = pin.pinid
@@ -193,6 +200,12 @@ class CreateDB(object):
         """
         server = couchdb.Server()  # insert hostname and port 5984 if db is not on local machine
         db = server['boards']
+        boardid_db = 0
+        for dbObj in db:
+            doc = db[dbObj]
+            boardid_db = doc['board_id']
+
+        board._board_id = int(boardid_db)+1
         doc_id, doc_rev = db.save({'board_id': board._board_id, 'board_name': board._board_name, 'userId': board._userId})
         board_dict = {}
         board_dict['board_id'] = board._board_id
